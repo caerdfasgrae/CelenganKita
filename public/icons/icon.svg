@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="celenganGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+    <linearGradient id="coinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="100%" stop-color="#CA8A04" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="128" fill="url(#celenganGrad)" />
+  
+  <!-- Falling Gold Coin into slot -->
+  <circle cx="256" cy="140" r="48" fill="url(#coinGrad)" stroke="#FEF08A" stroke-width="6" />
+  <path d="M256 120 V160 M240 140 H272" stroke="#854D0E" stroke-width="5" stroke-linecap="round" />
+
+  <!-- Piggy Bank Body -->
+  <ellipse cx="256" cy="300" rx="140" ry="110" fill="#FFFFFF" />
+  
+  <!-- Piggy Snout -->
+  <ellipse cx="140" cy="310" rx="35" ry="25" fill="#E2E8F0" />
+  <circle cx="130" cy="310" r="5" fill="#64748B" />
+  <circle cx="150" cy="310" r="5" fill="#64748B" />
+
+  <!-- Piggy Eye -->
+  <circle cx="195" cy="265" r="10" fill="#0F172A" />
+  <circle cx="198" cy="262" r="3" fill="#FFFFFF" />
+
+  <!-- Piggy Ear -->
+  <path d="M230 200 C220 160 270 165 260 210 Z" fill="#E2E8F0" />
+
+  <!-- Coin Slot on back -->
+  <rect x="230" y="195" width="52" height="12" rx="6" fill="#64748B" />
+
+  <!-- Piggy Feet -->
+  <rect x="180" y="380" width="36" height="40" rx="12" fill="#E2E8F0" />
+  <rect x="290" y="380" width="36" height="40" rx="12" fill="#E2E8F0" />
+
+  <!-- Couple Heart Motif -->
+  <path d="M330 260 C320 245 295 255 310 275 L330 295 L350 275 C365 255 340 245 330 260 Z" fill="#F43F5E" />
+</svg>
