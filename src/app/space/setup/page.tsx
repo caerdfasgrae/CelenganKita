@@ -95,7 +95,7 @@ export default function SpaceSetupPage() {
                 name="spaceName"
                 type="text"
                 required
-                placeholder="Contoh: Abyan & Dinda"
+                placeholder="Contoh: Rumah Impian / Celengan Bersama"
                 className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
@@ -107,7 +107,7 @@ export default function SpaceSetupPage() {
               <input
                 name="nickname"
                 type="text"
-                placeholder="Contoh: Ayah / Mas Abyan"
+                placeholder="Contoh: Ayah / Papah / Mas"
                 className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
