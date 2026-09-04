@@ -16,21 +16,24 @@ import {
   Tag,
   Plus,
   Trash2,
+  UserMinus,
 } from "lucide-react";
 import { logout } from "@/app/auth/actions";
-import { rotateWebhookKey } from "@/app/space/actions";
+import { rotateWebhookKey, removePartner, leaveSpace } from "@/app/space/actions";
 import {
   createCustomCategory,
   deleteCustomCategory,
 } from "@/app/transactions/actions";
 import { Space, SpaceMember, Category } from "@/types/database";
 import { Button } from "@/components/ui/button";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 
 interface SettingsViewProps {
   space: Space;
   members: SpaceMember[];
   initialCustomCategories?: Category[];
   siteUrl: string;
+  currentUserId?: string;
 }
 
 export default function SettingsView({
@@ -38,11 +41,46 @@ export default function SettingsView({
   members,
   initialCustomCategories = [],
   siteUrl,
+  currentUserId,
 }: SettingsViewProps) {
   const [copiedCode, setCopiedCode] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedPayload, setCopiedPayload] = useState(false);
   const [copiedWebhookKey, setCopiedWebhookKey] = useState(false);
+
+  // Member Management State
+  const [memberList, setMemberList] = useState<SpaceMember[]>(members);
+  const [memberToRemove, setMemberToRemove] = useState<SpaceMember | null>(null);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [isProcessingMember, setIsProcessingMember] = useState(false);
+  const [memberActionError, setMemberActionError] = useState<string | null>(null);
+
+  const currentMember = memberList.find((m) => m.user_id === currentUserId);
+  const isOwner = currentMember?.role === "owner";
+
+  async function handleConfirmRemove() {
+    if (!memberToRemove) return;
+    setIsProcessingMember(true);
+    setMemberActionError(null);
+    const res = await removePartner(space.id, memberToRemove.user_id);
+    setIsProcessingMember(false);
+    if (res?.error) {
+      setMemberActionError(res.error);
+    } else {
+      setMemberList((prev) => prev.filter((m) => m.id !== memberToRemove.id));
+      setMemberToRemove(null);
+    }
+  }
+
+  async function handleConfirmLeave() {
+    setIsProcessingMember(true);
+    setMemberActionError(null);
+    const res = await leaveSpace(space.id);
+    if (res?.error) {
+      setIsProcessingMember(false);
+      setMemberActionError(res.error);
+    }
+  }
 
   // Kategori Kustom State
   const [customCategories, setCustomCategories] = useState<Category[]>(initialCustomCategories);
@@ -215,7 +253,7 @@ export default function SettingsView({
             Pasangan di Celengan Ini:
           </span>
           <div className="space-y-1.5">
-            {members.map((m) => (
+            {memberList.map((m) => (
               <div
                 key={m.id}
                 className="flex items-center justify-between p-3 rounded-2xl bg-[#FFFDF9] border border-warm-border text-xs"
@@ -233,12 +271,45 @@ export default function SettingsView({
                     </p>
                   </div>
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FFF9EC] border border-amber-200 text-stone-800 uppercase">
-                  {m.role === "owner" ? "Owner" : "Partner"}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#FFF9EC] border border-amber-200 text-stone-800 uppercase">
+                    {m.role === "owner" ? "Owner" : "Partner"}
+                  </span>
+                  {isOwner && m.role === "partner" && (
+                    <button
+                      type="button"
+                      onClick={() => setMemberToRemove(m)}
+                      className="p-1.5 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                      title="Keluarkan Pasangan"
+                      aria-label={`Keluarkan ${m.nickname || "pasangan"} dari celengan`}
+                    >
+                      <UserMinus className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
+
+          {memberActionError && (
+            <div role="alert" className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-1.5 font-medium">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+              <span>{memberActionError}</span>
+            </div>
+          )}
+
+          {!isOwner && currentMember?.role === "partner" && (
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setShowLeaveModal(true)}
+                className="w-full min-h-[40px] px-3 rounded-xl border border-rose-200 bg-rose-50/60 hover:bg-rose-100/70 text-rose-700 text-xs font-bold transition flex items-center justify-center gap-1.5"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Keluar dari Celengan Ini
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -550,6 +621,30 @@ export default function SettingsView({
           </Button>
         </form>
       </div>
+
+      {/* Modal Konfirmasi Keluarkan Pasangan (Khusus Owner) */}
+      <ConfirmModal
+        isOpen={!!memberToRemove}
+        onClose={() => setMemberToRemove(null)}
+        onConfirm={handleConfirmRemove}
+        isLoading={isProcessingMember}
+        title="Keluarkan Pasangan dari Celengan?"
+        description={`Apakah kamu yakin ingin mengeluarkan ${memberToRemove?.nickname || "pasangan"} dari celengan "${space.name}"? Pasangan tidak akan bisa lagi mengakses atau mencatat di celengan ini. Riwayat catatan belanja yang sudah ada tetap tersimpan rapi di kas bersama.`}
+        confirmText="Ya, Keluarkan"
+        variant="destructive"
+      />
+
+      {/* Modal Konfirmasi Keluar dari Celengan (Khusus Partner) */}
+      <ConfirmModal
+        isOpen={showLeaveModal}
+        onClose={() => setShowLeaveModal(false)}
+        onConfirm={handleConfirmLeave}
+        isLoading={isProcessingMember}
+        title="Keluar dari Celengan Ini?"
+        description={`Apakah kamu yakin ingin keluar dari celengan "${space.name}"? Kamu tidak akan lagi terhubung ke saldo dan catatan bersama pasanganmu. Riwayat transaksi yang pernah kamu catat tetap ada di celengan ini.`}
+        confirmText="Ya, Keluar"
+        variant="destructive"
+      />
     </div>
   );
 }

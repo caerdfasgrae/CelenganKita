@@ -74,6 +74,7 @@ export default async function SpaceSettingsPage() {
           members={(members || []) as SpaceMember[]}
           initialCustomCategories={(customCategories || []) as Category[]}
           siteUrl={siteUrl}
+          currentUserId={user.id}
         />
       </div>
 

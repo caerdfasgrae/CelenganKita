@@ -174,3 +174,79 @@ export async function rotateWebhookKey(spaceId: string) {
     return { error: "Terjadi kesalahan sistem saat merotasi kunci webhook." };
   }
 }
+
+/**
+ * Mengeluarkan pasangan dari celengan (Khusus Owner)
+ */
+export async function removePartner(spaceId: string, partnerUserId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Sesi telah berakhir, silakan login kembali." };
+    }
+
+    if (!spaceId || !partnerUserId) {
+      return { error: "Data anggota tidak valid." };
+    }
+
+    const { data: result, error: rpcError } = await supabase.rpc("remove_space_member", {
+      _space_id: spaceId,
+      _target_user_id: partnerUserId,
+    });
+
+    if (rpcError) {
+      console.error("RPC remove_space_member error:", rpcError);
+      return { error: rpcError.message || "Gagal mengeluarkan pasangan dari celengan." };
+    }
+
+    revalidatePath("/space/settings");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (err: any) {
+    console.error("Unexpected error in removePartner:", err);
+    return { error: "Terjadi kesalahan sistem saat mengeluarkan pasangan." };
+  }
+}
+
+/**
+ * Pasangan keluar dari celengan secara mandiri (Khusus Partner)
+ */
+export async function leaveSpace(spaceId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Sesi telah berakhir, silakan login kembali." };
+    }
+
+    if (!spaceId) {
+      return { error: "ID Ruang tidak valid." };
+    }
+
+    const { data: result, error: rpcError } = await supabase.rpc("remove_space_member", {
+      _space_id: spaceId,
+      _target_user_id: user.id,
+    });
+
+    if (rpcError) {
+      console.error("RPC leaveSpace error:", rpcError);
+      return { error: rpcError.message || "Gagal keluar dari celengan." };
+    }
+
+    revalidatePath("/", "layout");
+    redirect("/space/setup");
+  } catch (err: any) {
+    if (err?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
+    console.error("Unexpected error in leaveSpace:", err);
+    return { error: "Terjadi kesalahan sistem saat keluar dari celengan." };
+  }
+}
