@@ -33,6 +33,7 @@
 | **OCR Engine** | Tesseract.js di Web Worker | 0 biaya server komputasi |
 | **Komputasi** | Google Cloud Run (Region `us-central1`) | Always Free Tier (2 juta req/bln, 360k GB-sec, 180k vCPU-sec) |
 | **Edge CDN** | Cloudflare Free Plan | Memangkas latensi US-ID dari ~250ms ke <25ms via caching edge Jakarta |
+| **Email Service** | Resend (Free Tier 3.000 email/bulan) | Custom SMTP untuk email transaksional bermerek CelenganKita |
 
 ---
 
