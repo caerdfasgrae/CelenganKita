@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import {
   Copy,
   Check,
@@ -16,6 +17,7 @@ import {
   Tag,
   Plus,
   Trash2,
+  Database,
 } from "lucide-react";
 import { logout } from "@/app/auth/actions";
 import { rotateWebhookKey } from "@/app/space/actions";
@@ -535,6 +537,27 @@ export default function SettingsView({
             </div>
           </div>
         )}
+      </div>
+
+      {/* Menu Riset Skripsi / Data Benchmarks */}
+      <div className="p-4 rounded-3xl bg-white border border-warm-border space-y-2 shadow-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-amber-50 border border-amber-200 text-orange-600 shrink-0">
+              <Database className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-warm-espresso">Data Riset & Evaluasi Skripsi</p>
+              <p className="text-[11px] text-stone-500">Benchmark KIE: Spatial-Keyword vs LLM</p>
+            </div>
+          </div>
+          <Link
+            href="/research/benchmarks"
+            className="text-xs font-bold px-3 py-1.5 rounded-xl bg-[#FFF9EC] border border-amber-200 text-stone-800 hover:bg-amber-100 transition shrink-0"
+          >
+            Buka Tabel &rarr;
+          </Link>
+        </div>
       </div>
 
       {/* Logout Button */}
