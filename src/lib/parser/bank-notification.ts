@@ -217,7 +217,68 @@ export function parseBankNotification(
     }
   }
 
-  // 2. Fallback Heuristik Umum jika format spesifik tidak persis cocok
+  // 2. Parser Percakapan Singkat / Chat WhatsApp (misal: "kopi 25rb", "makan siang 45k", "50rb bensin")
+  // Pola A: Item / Merchant lalu Nominal (contoh: "kopi 25rb", "beli bakso 35k", "makan siang rp 45.000")
+  const chatItemThenAmount = combinedText.match(
+    /^(?:beli|bayar|pesan)?\s*([a-zA-Z\s/&-]+?)\s+(?:sebesar\s+)?(?:rp\.?\s*)?([0-9.,]+)\s*(rb|k|ribu|jt|juta)?$/i
+  );
+  if (chatItemThenAmount) {
+    const rawMerchant = chatItemThenAmount[1].trim();
+    const rawNum = chatItemThenAmount[2];
+    const unit = chatItemThenAmount[3]?.toLowerCase();
+    let num = parseFloat(rawNum.replace(/\./g, "").replace(/,/g, "."));
+
+    if (unit === "rb" || unit === "k" || unit === "ribu") {
+      num = Math.round(num * 1000);
+    } else if (unit === "jt" || unit === "juta") {
+      num = Math.round(num * 1000000);
+    } else {
+      num = cleanCurrencyString(rawNum);
+    }
+
+    if (num > 0 && rawMerchant.length >= 2 && !/^(?:rp|idr)$/i.test(rawMerchant)) {
+      return {
+        sourceApp: matchedRule ? matchedRule.canonicalName : appNameOrPackage || "WhatsApp",
+        amount: num,
+        type: "expense",
+        merchant: rawMerchant,
+        rawText: combinedText,
+        success: true,
+      };
+    }
+  }
+
+  // Pola B: Nominal lalu Item / Merchant (contoh: "25rb kopi", "50k makan siang", "rp 50.000 buat bensin")
+  const chatAmountThenItem = combinedText.match(
+    /^(?:sebesar\s+)?(?:rp\.?\s*)?([0-9.,]+)\s*(rb|k|ribu|jt|juta)?\s+(?:buat|untuk|beli|bayar)?\s*([a-zA-Z0-9\s/&-]+)$/i
+  );
+  if (chatAmountThenItem) {
+    const rawNum = chatAmountThenItem[1];
+    const unit = chatAmountThenItem[2]?.toLowerCase();
+    const rawMerchant = chatAmountThenItem[3].trim();
+    let num = parseFloat(rawNum.replace(/\./g, "").replace(/,/g, "."));
+
+    if (unit === "rb" || unit === "k" || unit === "ribu") {
+      num = Math.round(num * 1000);
+    } else if (unit === "jt" || unit === "juta") {
+      num = Math.round(num * 1000000);
+    } else {
+      num = cleanCurrencyString(rawNum);
+    }
+
+    if (num > 0 && rawMerchant.length >= 2) {
+      return {
+        sourceApp: matchedRule ? matchedRule.canonicalName : appNameOrPackage || "WhatsApp",
+        amount: num,
+        type: "expense",
+        merchant: rawMerchant,
+        rawText: combinedText,
+        success: true,
+      };
+    }
+  }
+
+  // 3. Fallback Heuristik Umum jika format spesifik tidak persis cocok
   // Cari nominal dengan simbol Rp: "Rp 50.000" atau "Rp50.000"
   const genericRpMatch = combinedText.match(/(?:rp|idr)\s*([0-9.,]{3,})/i);
   if (genericRpMatch && genericRpMatch[1]) {

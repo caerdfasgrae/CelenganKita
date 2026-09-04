@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Camera, Image as ImageIcon, Loader2, Sparkles, AlertCircle } from "lucide-react";
 import { cleanCurrencyString } from "@/lib/utils";
 
@@ -18,9 +18,10 @@ interface OCRScannerProps {
     detectedDate?: string | null
   ) => void;
   onCancel?: () => void;
+  initialImageDataUrl?: string | null;
 }
 
-export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
+export default function OCRScanner({ onDetected, onCancel, initialImageDataUrl }: OCRScannerProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progressStatus, setProgressStatus] = useState<string>("");
   const [progressPercent, setProgressPercent] = useState<number>(0);
@@ -496,27 +497,29 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
     };
   }
 
-  async function processImageFile(file: File) {
+  useEffect(() => {
+    if (initialImageDataUrl && !previewImage && !isProcessing) {
+      processDataUrl(initialImageDataUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialImageDataUrl]);
+
+  async function processDataUrl(rawDataUrl: string) {
     setError(null);
     setIsProcessing(true);
     setProgressStatus("Menyiapkan gambar...");
     setProgressPercent(10);
 
     try {
-      // Baca file sebagai Data URL
-      const reader = new FileReader();
-      const rawDataUrl = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
       setPreviewImage(rawDataUrl);
 
       // Muat gambar ke Image element untuk preprocessing
       const img = new Image();
       img.src = rawDataUrl;
-      await new Promise((resolve) => (img.onload = resolve));
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
 
       setProgressStatus("Meningkatkan kontras teks...");
       setProgressPercent(25);
@@ -566,6 +569,29 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       console.error("OCR Error:", err);
       setError("Gagal memproses gambar: " + (err.message || "Error OCR"));
     } finally {
+      setIsProcessing(false);
+    }
+  }
+
+  async function processImageFile(file: File) {
+    setError(null);
+    setIsProcessing(true);
+    setProgressStatus("Menyiapkan gambar...");
+    setProgressPercent(10);
+
+    try {
+      // Baca file sebagai Data URL
+      const reader = new FileReader();
+      const rawDataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      await processDataUrl(rawDataUrl);
+    } catch (err: any) {
+      console.error("File Read Error:", err);
+      setError("Gagal membaca file gambar.");
       setIsProcessing(false);
     }
   }

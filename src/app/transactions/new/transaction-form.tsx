@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   TrendingDown,
@@ -51,6 +51,29 @@ export default function TransactionForm({ spaceId, categories }: TransactionForm
   const [source, setSource] = useState<"manual" | "ocr">("manual");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Shared Receipt Image dari PWA Web Share Target
+  const [sharedImageDataUrl, setSharedImageDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const sharedImg = sessionStorage.getItem("shared_receipt_image");
+      const sharedTxt = sessionStorage.getItem("shared_receipt_text");
+
+      if (sharedImg) {
+        setSharedImageDataUrl(sharedImg);
+        setShowOCR(true);
+        sessionStorage.removeItem("shared_receipt_image");
+      }
+
+      if (sharedTxt) {
+        setDescription(sharedTxt);
+        sessionStorage.removeItem("shared_receipt_text");
+      }
+    } catch {
+      // Abaikan error akses sessionStorage jika restricted
+    }
+  }, []);
 
   // Custom Category State
   const [showAddCategory, setShowAddCategory] = useState<boolean>(false);
@@ -287,6 +310,7 @@ export default function TransactionForm({ spaceId, categories }: TransactionForm
         <OCRScanner
           onDetected={handleOCRDetected}
           onCancel={() => setShowOCR(false)}
+          initialImageDataUrl={sharedImageDataUrl}
         />
       )}
 
