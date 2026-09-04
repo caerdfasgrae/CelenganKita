@@ -53,24 +53,24 @@ export function ConfirmModal({
       aria-modal="true"
       aria-labelledby="confirm-modal-title"
       aria-describedby="confirm-modal-desc"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-xs animate-in fade-in duration-200"
     >
       <div
         ref={modalRef}
-        className="w-full max-w-sm rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-2xl space-y-4"
+        className="w-full max-w-sm rounded-2xl bg-white border border-warm-border p-5 shadow-xl space-y-4"
       >
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5">
             <div
-              className={`p-2 rounded-lg shrink-0 ${
+              className={`p-2 rounded-lg shrink-0 border ${
                 variant === "destructive"
-                  ? "bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
-                  : "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+                  ? "bg-rose-50 border-rose-200 text-warm-coral"
+                  : "bg-amber-50 border-amber-200 text-warm-apricot"
               }`}
             >
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <h2 id="confirm-modal-title" className="text-sm font-bold text-slate-900 dark:text-white">
+            <h2 id="confirm-modal-title" className="text-sm font-bold text-warm-espresso">
               {title}
             </h2>
           </div>
@@ -78,14 +78,14 @@ export function ConfirmModal({
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition"
+            className="p-1 rounded-md text-stone-400 hover:text-stone-700 transition"
             aria-label="Tutup dialog"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <p id="confirm-modal-desc" className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p id="confirm-modal-desc" className="text-xs text-stone-600 leading-relaxed">
           {description}
         </p>
 

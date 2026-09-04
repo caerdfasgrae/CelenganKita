@@ -39,15 +39,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary:
-        "bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/20",
+        "bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold shadow-sm border border-orange-300 active:bg-orange-600",
       secondary:
-        "bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200",
+        "bg-[#F7F4EE] hover:bg-[#EFE9DF] text-stone-900 font-semibold border border-[#F3ECE2] active:bg-[#E5DDCF]",
       destructive:
-        "bg-rose-600 hover:bg-rose-700 text-white shadow-sm shadow-rose-600/20",
+        "bg-[#FF7E7E] hover:bg-[#FF6565] text-white font-extrabold shadow-sm border border-rose-300 active:bg-rose-600",
       outline:
-        "border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800",
+        "border border-[#F3ECE2] bg-white text-stone-800 hover:bg-[#FFFDF8] hover:border-[#FFA259] active:bg-stone-50",
       ghost:
-        "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100",
+        "text-stone-600 hover:bg-[#F7F4EE] hover:text-stone-900",
     };
 
     return (

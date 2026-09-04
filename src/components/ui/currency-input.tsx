@@ -92,7 +92,7 @@ export function CurrencyInput({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-xs font-semibold text-slate-700 dark:text-slate-300 select-none"
+          className="block text-xs font-semibold text-warm-espresso select-none"
         >
           {label}
         </label>
@@ -101,7 +101,7 @@ export function CurrencyInput({
       {/* Input Display UI */}
       <div className="relative">
         <span
-          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-black text-slate-400 dark:text-slate-500 pointer-events-none select-none"
+          className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-black text-stone-400 pointer-events-none select-none"
           aria-hidden="true"
         >
           Rp
@@ -111,7 +111,6 @@ export function CurrencyInput({
           id={inputId}
           type="text"
           inputMode="numeric"
-          pattern="[0-9]*"
           required={required}
           value={formatDisplay(numericValue)}
           onChange={handleInputChange}
@@ -119,10 +118,10 @@ export function CurrencyInput({
           aria-invalid={!!error}
           aria-describedby={error ? errorId : undefined}
           className={cn(
-            "w-full h-12 pl-11 pr-10 text-lg font-black tracking-tight rounded-lg border bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 transition",
-            "border-slate-200 dark:border-slate-700",
-            "focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-slate-900",
-            error && "border-rose-500 focus:ring-rose-500",
+            "w-full h-12 pl-11 pr-10 text-lg font-black tracking-tight rounded-lg border bg-white text-warm-espresso transition tabular-nums",
+            "border-warm-border",
+            "focus:outline-none focus:ring-2 focus:ring-[#FFA259]/30 focus:border-[#FFA259] focus:bg-white",
+            error && "border-warm-coral focus:ring-warm-coral/30 focus:border-warm-coral",
             className
           )}
         />
@@ -131,7 +130,7 @@ export function CurrencyInput({
           <button
             type="button"
             onClick={handleReset}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-stone-400 hover:text-stone-700 transition"
             title="Reset nominal"
             aria-label="Reset nominal"
           >
@@ -143,27 +142,31 @@ export function CurrencyInput({
       {/* Nilai numerik murni yang dikirimkan form ke Server Action */}
       <input type="hidden" name={name} value={numericValue} />
 
-      {/* Quick Add Chips (Ramah Jempol di HP) */}
+      {error && (
+        <p id={errorId} role="alert" className="text-xs text-rose-600 flex items-center gap-1 font-medium">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
+
+      {/* Quick Add Chips */}
       {showQuickChips && (
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 select-none">
+        <div
+          role="group"
+          aria-label="Tambah nominal cepat"
+          className="flex items-center gap-1.5 overflow-x-auto pt-0.5 pb-1 select-none"
+        >
           {quickChips.map((chip) => (
             <button
               key={chip.value}
               type="button"
               onClick={() => addQuickAmount(chip.value)}
-              className="px-2.5 py-1 text-xs font-semibold rounded-md border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700 dark:hover:bg-emerald-950 dark:hover:text-emerald-300 hover:border-emerald-300 transition shrink-0 active:scale-95"
+              className="min-h-[36px] px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#FFF9EC] hover:bg-warm-cream text-stone-800 border border-warm-border hover:border-warm-honey transition active:scale-[0.97] shrink-0 tabular-nums"
             >
               {chip.label}
             </button>
           ))}
         </div>
-      )}
-
-      {error && (
-        <p id={errorId} role="alert" className="text-xs text-rose-600 dark:text-rose-400 flex items-center gap-1 mt-1">
-          <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-          <span>{error}</span>
-        </p>
       )}
     </div>
   );

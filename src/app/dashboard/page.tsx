@@ -91,95 +91,94 @@ export default async function DashboardPage() {
         <header className="flex items-center justify-between pt-2">
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                Ruang Dompet
+              <span className="text-[11px] font-bold tracking-wider text-stone-500 uppercase">
+                Celengan Bersama
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
+              <span className="w-2 h-2 rounded-full bg-warm-coral" aria-hidden="true"></span>
             </div>
-            <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
               {space.name}
             </h1>
           </div>
 
           <Link
             href="/space/settings"
-            aria-label="Pengaturan ruang dan anggota"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+            aria-label="Pengaturan celengan dan pasangan"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-warm-border text-xs font-semibold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition shadow-2xs"
           >
-            <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+            <Users className="w-3.5 h-3.5 text-orange-600" aria-hidden="true" />
             <span>{members?.length || 1} Pasangan</span>
           </Link>
         </header>
 
-        {/* Banner Antrean Validasi Notifikasi (Fitur 1) */}
+        {/* Banner Antrean Validasi Notifikasi */}
         {(pendingCount ?? 0) > 0 && (
           <Link
             href="/validations"
-            aria-label={`${pendingCount} notifikasi m-banking menunggu validasi`}
-            className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-300 dark:border-amber-700/80 flex items-center justify-between transition hover:opacity-95"
+            aria-label={`${pendingCount} belanja otomatis menunggu ditinjau`}
+            className="p-3.5 rounded-2xl bg-[#FFF9EC] border border-amber-200 flex items-center justify-between transition hover:border-amber-300 shadow-2xs"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <BellRing className="w-5 h-5" aria-hidden="true" />
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-orange-700 border border-amber-200 flex items-center justify-center shrink-0">
+                <BellRing className="w-4 h-4" aria-hidden="true" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  {pendingCount} Notifikasi Perlu Divalidasi!
+                <p className="text-xs font-bold text-warm-espresso">
+                  {pendingCount} Belanja Otomatis Perlu Ditinjau
                 </p>
-                <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                  Data otomatis dari ponsel siap dikonfirmasi ke kas.
+                <p className="text-[11px] text-stone-600">
+                  Ada catatan dari notifikasi HP yang siap dimasukkan ke kas bersama.
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
+            <ChevronRight className="w-4 h-4 text-stone-400 shrink-0" aria-hidden="true" />
           </Link>
         )}
 
         {/* Card Saldo Utama */}
         <section
           aria-label="Ringkasan Saldo dan Anggaran Bulan Ini"
-          className="p-5 rounded-xl bg-emerald-700 text-white shadow-md shadow-emerald-900/10 space-y-4"
+          className="p-5 rounded-3xl bg-gradient-to-br from-[#FFF9EE] via-[#FFF4E1] to-[#FFECC2] border border-[#F3E1C0] text-stone-900 space-y-4 shadow-xs"
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-emerald-100">
-              Sisa Anggaran Bersama Bulan Ini
-            </span>
-            <div className="p-1.5 rounded-lg bg-white/15">
-              <PiggyBank className="w-4 h-4 text-emerald-200" aria-hidden="true" />
+            <div>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-stone-600">
+                Sisa Saldo Bulan Ini
+              </span>
+              <p className="text-3xl font-black tracking-tight text-warm-espresso mt-0.5 tabular-nums">
+                {formatRupiah(balance)}
+              </p>
+            </div>
+            <div className="w-11 h-11 rounded-2xl bg-white/90 border border-amber-200/80 flex items-center justify-center text-orange-700 shadow-2xs">
+              <PiggyBank className="w-6 h-6" aria-hidden="true" />
             </div>
           </div>
 
-          <div>
-            <p className="text-3xl font-black tracking-tight">
-              {formatRupiah(balance)}
-            </p>
-          </div>
-
           {/* Income & Expense Breakdown */}
-          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/20">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/40 flex items-center justify-center text-emerald-100 shrink-0">
+          <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-amber-200/60">
+            <div className="flex items-center gap-2.5 bg-white/80 border border-amber-100 rounded-2xl p-2.5 shadow-2xs">
+              <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-700 shrink-0">
                 <ArrowDownLeft className="w-4 h-4" aria-hidden="true" />
               </div>
-              <div>
-                <p className="text-[10px] text-emerald-200 uppercase font-semibold">
-                  Pemasukan
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+                  Total Masuk
                 </p>
-                <p className="text-xs font-bold text-white tracking-tight">
+                <p className="text-xs font-bold text-emerald-700 tracking-tight tabular-nums truncate">
                   + {formatRupiah(totalIncome)}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-rose-500/40 flex items-center justify-center text-rose-100 shrink-0">
+            <div className="flex items-center gap-2.5 bg-white/80 border border-amber-100 rounded-2xl p-2.5 shadow-2xs">
+              <div className="w-7 h-7 rounded-xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-warm-coral shrink-0">
                 <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
               </div>
-              <div>
-                <p className="text-[10px] text-rose-200 uppercase font-semibold">
-                  Pengeluaran
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-stone-500 uppercase tracking-wider">
+                  Total Keluar
                 </p>
-                <p className="text-xs font-bold text-white tracking-tight">
+                <p className="text-xs font-bold text-warm-coral tracking-tight tabular-nums truncate">
                   - {formatRupiah(totalExpense)}
                 </p>
               </div>
@@ -187,52 +186,52 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Quick Action Buttons (Touch Target >= 44px, rounded-lg) */}
-        <div className="grid grid-cols-2 gap-2.5">
+        {/* Quick Action Buttons */}
+        <div className="grid grid-cols-2 gap-3">
           <Link
             href="/transactions/new"
-            className="min-h-[48px] p-3 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition group"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-warm-border flex items-center gap-3 hover:border-warm-apricot hover:bg-[#FFFDF9] transition group shadow-2xs"
           >
-            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition shrink-0">
+            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 group-hover:scale-105 transition shrink-0">
               <PlusCircle className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                Catat Transaksi
+              <p className="text-xs font-bold text-warm-espresso truncate">
+                Catat Belanja
               </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                Manual
+              <p className="text-[11px] text-stone-500 truncate">
+                Ketik Sendiri
               </p>
             </div>
           </Link>
 
           <Link
             href="/transactions/new?mode=ocr"
-            className="min-h-[48px] p-3 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition group"
+            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-warm-border flex items-center gap-3 hover:border-warm-apricot hover:bg-[#FFFDF9] transition group shadow-2xs"
           >
-            <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400 group-hover:scale-105 transition shrink-0">
+            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 group-hover:scale-105 transition shrink-0">
               <ScanLine className="w-4 h-4" aria-hidden="true" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                Scan Struk (OCR)
+              <p className="text-xs font-bold text-warm-espresso truncate">
+                Foto Struk
               </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                Kamera / Galeri
+              <p className="text-[11px] text-stone-500 truncate">
+                Pindai Nota Belanja
               </p>
             </div>
           </Link>
         </div>
 
         {/* Transaksi Terbaru */}
-        <section aria-label="Riwayat Transaksi Terkini" className="space-y-2.5 pt-1">
+        <section aria-label="Catatan Belanja Terkini" className="space-y-2.5 pt-1">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-              Riwayat Transaksi Terkini
+            <h2 className="text-[11px] font-bold uppercase tracking-wider text-stone-500">
+              Catatan Belanja Terkini
             </h2>
             <Link
               href="/transactions"
-              className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+              className="text-xs font-bold text-orange-600 hover:text-orange-700 transition"
             >
               Lihat Semua
             </Link>
@@ -245,31 +244,34 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={tx.id}
-                    className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between transition hover:border-slate-300 dark:hover:border-slate-600"
+                    className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-center justify-between transition hover:border-amber-200 shadow-2xs"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1 mr-2">
                       <div
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                        className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border ${
                           isExpense
-                            ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
-                            : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+                            ? "bg-rose-50 border-rose-200/80 text-warm-coral"
+                            : "bg-emerald-50 border-emerald-200/80 text-emerald-700"
                         }`}
                       >
                         {isExpense ? (
-                          <TrendingDown className="w-4 h-4" aria-hidden="true" />
+                          <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
                         ) : (
-                          <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                          <ArrowDownLeft className="w-4 h-4" aria-hidden="true" />
                         )}
                       </div>
+
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                          {tx.description || tx.categories?.name || "Transaksi"}
+                        <p className="text-xs font-bold text-warm-espresso truncate">
+                          {tx.description || (isExpense ? "Pengeluaran" : "Pemasukan")}
                         </p>
-                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
+                        <div className="flex items-center gap-2 text-[11px] text-stone-500 mt-0.5">
                           <span>{formatTanggal(tx.transaction_date)}</span>
+                          <span>•</span>
+                          <span>{tx.profiles?.full_name || "Pasangan"}</span>
                           {tx.source !== "manual" && (
-                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
-                              {tx.source === "webhook" ? "Otomatis" : "OCR"}
+                            <span className="px-1.5 py-0.2 rounded-md bg-[#FFF9EC] border border-amber-200 text-stone-800 font-semibold text-[10px]">
+                              {tx.source === "webhook" ? "Otomatis" : "Foto Nota"}
                             </span>
                           )}
                         </div>
@@ -278,16 +280,14 @@ export default async function DashboardPage() {
 
                     <div className="text-right shrink-0">
                       <p
-                        className={`text-xs font-black tracking-tight ${
-                          isExpense
-                            ? "text-rose-600 dark:text-rose-400"
-                            : "text-emerald-600 dark:text-emerald-400"
+                        className={`text-xs font-bold tabular-nums tracking-tight ${
+                          isExpense ? "text-warm-coral" : "text-emerald-700"
                         }`}
                       >
                         {isExpense ? "- " : "+ "}
                         {formatRupiah(tx.amount)}
                       </p>
-                      <p className="text-[10px] text-slate-400">
+                      <p className="text-[11px] text-stone-500">
                         {tx.categories?.name || "Kategori"}
                       </p>
                     </div>
@@ -296,16 +296,25 @@ export default async function DashboardPage() {
               })}
             </div>
           ) : (
-            <div className="p-8 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-2">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+            <div className="p-8 rounded-3xl bg-white border border-dashed border-warm-border text-center space-y-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#FFF9EC] border border-amber-100 text-orange-600 flex items-center justify-center mx-auto">
                 <PiggyBank className="w-5 h-5" aria-hidden="true" />
               </div>
-              <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                Belum ada transaksi bulan ini
-              </p>
-              <p className="text-[11px] text-slate-400 max-w-xs mx-auto">
-                Mulai catat transaksi manual atau sambungkan notifikasi e-wallet ponsel Anda.
-              </p>
+              <div>
+                <p className="text-xs font-bold text-warm-espresso">
+                  Belum ada catatan belanja bulan ini
+                </p>
+                <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-0.5 leading-relaxed">
+                  Yuk catat pengeluaran pertama berdua, foto nota belanja, atau hubungkan notifikasi HP.
+                </p>
+              </div>
+              <Link
+                href="/transactions/new"
+                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-bold text-xs transition shadow-sm"
+              >
+                <PlusCircle className="w-4 h-4" />
+                Catat Belanja Pertama
+              </Link>
             </div>
           )}
         </section>

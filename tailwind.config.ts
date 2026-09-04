@@ -11,22 +11,35 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        warm: {
+          cream: "#FFEDB9",    // Butter Cream
+          honey: "#FFCB56",    // Honey Amber
+          apricot: "#FFA259",  // Warm Apricot (Primary CTA)
+          coral: "#FF7E7E",    // Coral Rose (Love Accent / Expense)
+          canvas: "#FFFDF8",   // Soft Warm Canvas
+          card: "#FFFFFF",     // Crisp White Card
+          border: "#F3ECE2",   // Warm Soft Border
+          espresso: "#1C1917", // Deep Warm Espresso (Text)
+          muted: "#78716C",    // Warm Muted Gray
+          subtle: "#57534E",   // Warm Subtle Gray
+        },
         primary: {
-          50: "#ecfdf5",
-          100: "#d1fae5",
-          200: "#a7f3d0",
-          300: "#6ee7b7",
-          400: "#34d399",
-          500: "#10b981", // Celengan Emerald Green
-          600: "#059669",
-          700: "#047857",
-          800: "#065f46",
-          900: "#064e3b",
+          50: "#fffbeb",
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d",
+          400: "#FFA259",
+          500: "#FFA259", // Celengan Warm Apricot
+          600: "#f97316",
+          700: "#ea580c",
+          800: "#c2410c",
+          900: "#7c2d12",
         },
         couple: {
-          rose: "#f43f5e",
-          sky: "#0ea5e9",
-          amber: "#f59e0b",
+          rose: "#FF7E7E",
+          amber: "#FFCB56",
+          apricot: "#FFA259",
+          cream: "#FFEDB9",
         }
       },
       borderRadius: {

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 // Pastikan memenuhi WCAG 1.4.4: Jangan gunakan userScalable: false atau maximumScale: 1
 export const viewport: Viewport = {
-  themeColor: "#10b981",
+  themeColor: "#FFFDF8",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -32,10 +32,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased flex flex-col items-center">
+      <body className="min-h-screen bg-[#F7F4EE] text-warm-espresso antialiased flex flex-col items-center">
         <PWARegister />
-        {/* Container Mobile PWA: Standar utilitas finansial mobile-first */}
-        <div className="w-full max-w-md min-h-screen bg-white dark:bg-slate-900 shadow-xl flex flex-col relative border-x border-slate-200 dark:border-slate-800">
+        {/* Container Mobile PWA: Warm Cozy Couple Atmosphere */}
+        <div className="w-full max-w-md min-h-screen bg-warm-canvas text-warm-espresso shadow-xl flex flex-col relative border-x border-warm-border">
           <main role="main" className="flex-1 flex flex-col">
             {children}
           </main>

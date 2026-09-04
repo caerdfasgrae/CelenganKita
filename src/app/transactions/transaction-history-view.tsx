@@ -49,17 +49,17 @@ export default function TransactionHistoryView({
       {/* Filter Row: Pengelompokan jenis & kategori */}
       <div
         role="group"
-        aria-label="Filter transaksi"
+        aria-label="Filter catatan belanja"
         className="flex items-center gap-2 overflow-x-auto pb-1 select-none"
       >
         <button
           type="button"
           aria-pressed={filterType === "all"}
           onClick={() => setFilterType("all")}
-          className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+          className={`min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 border ${
             filterType === "all"
-              ? "bg-emerald-600 text-white shadow-xs"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#FFA259] border-orange-300 text-stone-900 shadow-sm"
+              : "bg-white border-warm-border text-stone-600 hover:text-stone-900 hover:border-warm-apricot"
           }`}
         >
           Semua
@@ -68,10 +68,10 @@ export default function TransactionHistoryView({
           type="button"
           aria-pressed={filterType === "expense"}
           onClick={() => setFilterType("expense")}
-          className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+          className={`min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 border ${
             filterType === "expense"
-              ? "bg-rose-600 text-white shadow-xs"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#FF7E7E] border-rose-300 text-white shadow-sm"
+              : "bg-white border-warm-border text-stone-600 hover:text-stone-900 hover:border-warm-apricot"
           }`}
         >
           Pengeluaran
@@ -80,10 +80,10 @@ export default function TransactionHistoryView({
           type="button"
           aria-pressed={filterType === "income"}
           onClick={() => setFilterType("income")}
-          className={`min-h-[36px] px-3.5 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ${
+          className={`min-h-[36px] px-3.5 py-1.5 rounded-xl text-xs font-bold transition shrink-0 border ${
             filterType === "income"
-              ? "bg-emerald-600 text-white shadow-xs"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-emerald-600 border-emerald-500 text-white shadow-sm"
+              : "bg-white border-warm-border text-stone-600 hover:text-stone-900 hover:border-warm-apricot"
           }`}
         >
           Pemasukan
@@ -91,10 +91,10 @@ export default function TransactionHistoryView({
 
         {/* Filter Kategori Dropdown */}
         <select
-          aria-label="Filter kategori transaksi"
+          aria-label="Filter kategori catatan"
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="min-h-[36px] px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 shrink-0"
+          className="min-h-[36px] px-3 py-1.5 rounded-xl bg-white border border-warm-border text-xs font-semibold text-stone-700 focus:outline-none focus:border-warm-apricot shrink-0 shadow-2xs"
         >
           <option value="all">Semua Kategori</option>
           {categories.map((c) => (
@@ -114,30 +114,30 @@ export default function TransactionHistoryView({
             return (
               <div
                 key={tx.id}
-                className="p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between transition hover:border-slate-300 dark:hover:border-slate-600"
+                className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-center justify-between transition hover:border-amber-200 shadow-2xs"
               >
                 <div className="flex items-center gap-3 min-w-0 flex-1 mr-2">
                   <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border ${
                       isExpense
-                        ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
-                        : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
+                        ? "bg-rose-50 border-rose-200/80 text-warm-coral"
+                        : "bg-emerald-50 border-emerald-200/80 text-emerald-700"
                     }`}
                   >
                     {isExpense ? (
-                      <TrendingDown className="w-5 h-5" aria-hidden="true" />
+                      <TrendingDown className="w-4 h-4" aria-hidden="true" />
                     ) : (
-                      <TrendingUp className="w-5 h-5" aria-hidden="true" />
+                      <TrendingUp className="w-4 h-4" aria-hidden="true" />
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
-                      {tx.description || tx.category?.name || "Transaksi"}
+                    <p className="text-xs font-bold text-warm-espresso truncate">
+                      {tx.description || tx.category?.name || "Catatan"}
                     </p>
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    <div className="flex items-center gap-1.5 text-[11px] text-stone-500 mt-0.5">
                       <span>{formatTanggal(tx.transaction_date)}</span>
                       <span aria-hidden="true">&bull;</span>
-                      <span className="font-medium text-slate-600 dark:text-slate-300 truncate">
+                      <span className="font-medium text-stone-600 truncate">
                         {tx.category?.name}
                       </span>
                     </div>
@@ -147,29 +147,28 @@ export default function TransactionHistoryView({
                 <div className="flex items-center gap-2 shrink-0">
                   <div className="text-right">
                     <p
-                      className={`text-xs font-black tracking-tight ${
+                      className={`text-xs font-bold tabular-nums tracking-tight ${
                         isExpense
-                          ? "text-rose-600 dark:text-rose-400"
-                          : "text-emerald-600 dark:text-emerald-400"
+                          ? "text-warm-coral"
+                          : "text-emerald-700"
                       }`}
                     >
-                      {/* Simbol eksplisit tanda + atau - memenuhi syarat a11y non-color only */}
                       {isExpense ? "- " : "+ "}
                       {formatRupiah(tx.amount)}
                     </p>
                     {tx.source !== "manual" && (
-                      <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold inline-block mt-0.5">
-                        {tx.source === "webhook" ? "Otomatis" : "OCR"}
+                      <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-[#FFF9EC] border border-amber-200 text-stone-800 font-semibold inline-block mt-0.5">
+                        {tx.source === "webhook" ? "Otomatis" : "Foto Nota"}
                       </span>
                     )}
                   </div>
 
-                  {/* Tombol Hapus: Terlihat permanen di HP (tidak terkunci hover) & touch target >= 44x44px */}
+                  {/* Tombol Hapus */}
                   <button
                     type="button"
                     onClick={() => setPendingDeleteTx(tx)}
-                    aria-label={`Hapus catatan transaksi ${tx.description || tx.category?.name || ""}`}
-                    className="w-11 h-11 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 active:scale-95 transition flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500"
+                    aria-label={`Hapus catatan ${tx.description || tx.category?.name || ""}`}
+                    className="w-9 h-9 rounded-xl text-stone-400 hover:text-warm-coral hover:bg-rose-50 active:scale-95 transition flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-coral"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -179,20 +178,20 @@ export default function TransactionHistoryView({
           })}
         </div>
       ) : (
-        <div className="py-16 text-center text-slate-400 text-xs">
-          Tidak ada catatan transaksi yang sesuai dengan filter.
+        <div className="py-16 text-center text-stone-500 text-xs border border-dashed border-warm-border rounded-2xl bg-white">
+          Tidak ada catatan belanja yang sesuai dengan pilihan.
         </div>
       )}
 
-      {/* Modal Dialog Konfirmasi Hapus (Pengganti window.confirm) */}
+      {/* Modal Dialog Konfirmasi Hapus */}
       <ConfirmModal
         isOpen={!!pendingDeleteTx}
         onClose={() => setPendingDeleteTx(null)}
         onConfirm={handleConfirmDelete}
         isLoading={isPending}
-        title="Hapus Catatan Transaksi?"
-        description={`Apakah Anda yakin ingin menghapus catatan "${pendingDeleteTx?.description || "Transaksi"}" sebesar ${formatRupiah(pendingDeleteTx?.amount)}? Data yang dihapus tidak dapat dikembalikan.`}
-        confirmText="Hapus Transaksi"
+        title="Hapus Catatan Belanja?"
+        description={`Apakah Anda yakin ingin menghapus catatan "${pendingDeleteTx?.description || "Belanja"}" sebesar ${formatRupiah(pendingDeleteTx?.amount)}? Data yang dihapus tidak dapat dikembalikan.`}
+        confirmText="Hapus Catatan"
         cancelText="Batal"
         variant="destructive"
       />

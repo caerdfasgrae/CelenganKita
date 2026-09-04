@@ -53,41 +53,41 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
   }
 
   return (
-    <div className="p-4 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
-      {/* Top row: Source app badge, Status "Belum Masuk Buku Kas", & Date */}
+    <div className="p-4 rounded-2xl bg-white border border-warm-border space-y-3 shadow-xs">
+      {/* Top row: Source app badge & Date */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-[11px]">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="px-2 py-0.5 rounded-lg bg-[#FFF9EC] border border-amber-200 text-stone-800 font-bold text-[11px]">
             {item.source_app}
           </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400">
+          <span className="text-[11px] text-stone-500">
             {formatTanggal(item.created_at)}
           </span>
         </div>
         <span
-          className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-md ${
+          className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-lg border ${
             isExpense
-              ? "bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400"
-              : "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400"
+              ? "bg-rose-50 border-rose-200 text-warm-coral"
+              : "bg-emerald-50 border-emerald-200 text-emerald-700"
           }`}
         >
           {isExpense ? "Pengeluaran" : "Pemasukan"}
         </span>
       </div>
 
-      {/* Trust Reminder: Belum masuk buku kas resmi */}
-      <div className="flex items-center gap-1.5 text-[10px] text-amber-600 dark:text-amber-400 font-semibold bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-md border border-amber-200 dark:border-amber-900/50">
-        <Sparkles className="w-3 h-3 shrink-0" aria-hidden="true" />
-        <span>Perlu Konfirmasi: Belum tercatat di buku kas resmi Anda.</span>
+      {/* Trust Reminder */}
+      <div className="flex items-center gap-1.5 text-[11px] text-stone-700 font-medium bg-[#FFF9EC] px-2.5 py-1.5 rounded-xl border border-amber-200">
+        <Sparkles className="w-3.5 h-3.5 shrink-0 text-orange-600" aria-hidden="true" />
+        <span>Perlu dicek: Belum dimasukkan ke catatan kas bersama.</span>
       </div>
 
       {/* Raw Text snippet preview */}
-      <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-400 italic line-clamp-2">
+      <div className="p-2.5 rounded-xl bg-[#FBF8F2] border border-warm-border text-[11px] text-stone-600 italic line-clamp-2">
         &ldquo;{item.raw_text}&rdquo;
       </div>
 
       {error && (
-        <div role="alert" className="p-2 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-1.5">
+        <div role="alert" className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 font-medium">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
           <span>{error}</span>
         </div>
@@ -95,22 +95,22 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
 
       {/* Parsed Info or Edit Mode */}
       {isEditing ? (
-        <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-slate-700">
+        <div className="space-y-2.5 pt-1 border-t border-warm-border">
           <div>
-            <label htmlFor={`edit-amount-${item.id}`} className="block text-[10px] font-semibold text-slate-500">
-              Nominal Transaksi (Rp)
+            <label htmlFor={`edit-amount-${item.id}`} className="block text-[11px] font-semibold text-warm-espresso mb-1">
+              Nominal Belanja (Rp)
             </label>
             <input
               id={`edit-amount-${item.id}`}
               type="number"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full h-10 px-3 rounded-xl border border-warm-border bg-white text-xs font-bold text-warm-espresso focus:outline-none focus:border-warm-apricot"
             />
           </div>
           <div>
-            <label htmlFor={`edit-desc-${item.id}`} className="block text-[10px] font-semibold text-slate-500">
-              Keterangan / Merchant
+            <label htmlFor={`edit-desc-${item.id}`} className="block text-[11px] font-semibold text-warm-espresso mb-1">
+              Nama Toko / Keperluan
             </label>
             <input
               id={`edit-desc-${item.id}`}
@@ -118,13 +118,13 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
               maxLength={255}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full h-10 px-3 rounded-xl border border-warm-border bg-white text-xs text-warm-espresso focus:outline-none focus:border-warm-apricot"
             />
           </div>
           <button
             type="button"
             onClick={() => setIsEditing(false)}
-            className="text-[11px] font-bold text-emerald-600 hover:underline pt-0.5"
+            className="text-[11px] font-bold text-orange-600 hover:text-orange-700 pt-0.5"
           >
             Selesai Edit
           </button>
@@ -132,10 +132,10 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
       ) : (
         <div className="flex items-center justify-between pt-1">
           <div>
-            <p className="text-base font-black text-slate-900 dark:text-white tracking-tight">
+            <p className="text-base font-black text-warm-espresso tracking-tight tabular-nums">
               {formatRupiah(amount)}
             </p>
-            <p className="text-xs text-slate-600 dark:text-slate-300 font-medium truncate max-w-[240px]">
+            <p className="text-xs text-stone-600 font-medium truncate max-w-[240px] mt-0.5">
               {description}
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
             type="button"
             onClick={() => setIsEditing(true)}
             aria-label="Edit nominal atau catatan notifikasi"
-            className="w-10 h-10 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center justify-center"
+            className="w-9 h-9 rounded-xl text-stone-500 hover:text-stone-900 hover:bg-stone-100 transition flex items-center justify-center border border-warm-border shadow-2xs"
           >
             <Edit3 className="w-4 h-4" />
           </button>
@@ -151,16 +151,16 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
       )}
 
       {/* Category selector & Action Buttons */}
-      <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+      <div className="space-y-2.5 pt-2 border-t border-warm-border">
         <div className="flex items-center gap-2">
-          <label htmlFor={`cat-select-${item.id}`} className="text-[11px] font-semibold text-slate-600 dark:text-slate-400 shrink-0">
+          <label htmlFor={`cat-select-${item.id}`} className="text-[11px] font-semibold text-warm-espresso shrink-0">
             Kategori:
           </label>
           <select
             id={`cat-select-${item.id}`}
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 text-xs font-medium text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="flex-1 h-10 px-3 rounded-xl border border-warm-border bg-white text-xs font-semibold text-warm-espresso focus:outline-none focus:border-warm-apricot shadow-2xs"
           >
             {matchingCategories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -170,16 +170,16 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
           </select>
         </div>
 
-        {/* Buttons: Setuju vs Tolak (Touch targets >= 44px) */}
+        {/* Buttons: Masukkan ke Kas vs Abaikan */}
         <div className="grid grid-cols-2 gap-2 pt-1">
           <Button
             variant="outline"
             disabled={isPending}
             onClick={() => setShowRejectModal(true)}
-            className="w-full text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+            className="w-full text-xs font-semibold text-stone-600 hover:text-warm-coral hover:bg-rose-50 hover:border-rose-200"
           >
             <X className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
-            Tolak
+            Abaikan
           </Button>
 
           <Button
@@ -187,23 +187,23 @@ export default function ValidationItem({ item, categories }: ValidationItemProps
             isLoading={isPending}
             loadingText="Mencatat..."
             onClick={handleApprove}
-            className="w-full text-xs font-bold"
+            className="w-full text-xs font-bold bg-[#FFA259] hover:bg-[#F97316] text-stone-900 border border-orange-300 shadow-sm"
           >
             <Check className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
-            Setuju Catat
+            Masukkan ke Kas
           </Button>
         </div>
       </div>
 
-      {/* Modal Dialog Konfirmasi Penolakan Notifikasi */}
+      {/* Modal Dialog Konfirmasi Pengabaian Notifikasi */}
       <ConfirmModal
         isOpen={showRejectModal}
         onClose={() => setShowRejectModal(false)}
         onConfirm={handleConfirmReject}
         isLoading={isPending}
-        title="Tolak Notifikasi Ini?"
-        description={`Apakah Anda yakin ingin menolak transaksi dari ${item.source_app} sebesar ${formatRupiah(amount)}? Data ini akan dikeluarkan dari antrean validasi dan tidak akan dicatat ke saldo kas.`}
-        confirmText="Tolak & Buang"
+        title="Abaikan Notifikasi Belanja Ini?"
+        description={`Apakah kalian ingin mengabaikan catatan belanja dari ${item.source_app} sebesar ${formatRupiah(amount)}? Catatan ini tidak akan dimasukkan ke saldo kas bersama.`}
+        confirmText="Abaikan"
         cancelText="Batal"
         variant="destructive"
       />

@@ -100,3 +100,21 @@ export interface ParsedNotificationResult {
   rawText: string;
   success: boolean;
 }
+
+export interface ReceiptEvaluation {
+  id: string;
+  space_id: string;
+  user_id: string | null;
+  raw_text: string;
+  spatial_merchant: string | null;
+  spatial_amount: number | null;
+  spatial_latency_ms: number;
+  llm_merchant: string | null;
+  llm_amount: number | null;
+  llm_latency_ms: number;
+  llm_status: string;
+  actual_merchant: string;
+  actual_amount: number;
+  created_at: string;
+}
+

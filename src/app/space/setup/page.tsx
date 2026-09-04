@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { PlusCircle, UserPlus, Heart, AlertCircle } from "lucide-react";
+import { PlusCircle, UserPlus, Users, AlertCircle } from "lucide-react";
 import { createNewSpace, joinExistingSpace } from "@/app/space/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,22 +37,22 @@ export default function SpaceSetupPage() {
     <div className="flex-1 flex flex-col justify-between p-6">
       {/* Header */}
       <div className="text-center pt-6 space-y-2">
-        <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mx-auto">
-          <Heart className="w-6 h-6 fill-emerald-600 dark:fill-emerald-400" aria-hidden="true" />
+        <div className="w-12 h-12 rounded-2xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 mx-auto shadow-xs">
+          <Users className="w-6 h-6" aria-hidden="true" />
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-          Ruang Anggaran Bersama
+        <h1 className="text-2xl font-black text-warm-espresso tracking-tight">
+          Mulai Celengan Bersama
         </h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
-          Pilih untuk membuat dompet bersama baru atau bergabung ke dompet yang sudah dibuat pasanganmu.
+        <p className="text-xs text-stone-600 max-w-xs mx-auto leading-relaxed">
+          Bikin celengan baru atau masukkan kode sambung dari pasanganmu untuk mulai mencatat berdua.
         </p>
       </div>
 
-      {/* Switcher Tab (Normalisasi rounded-lg) */}
+      {/* Switcher Tab */}
       <div
         role="tablist"
-        aria-label="Pilih opsi ruang anggaran"
-        className="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg grid grid-cols-2 gap-1 my-4 select-none"
+        aria-label="Pilih opsi celengan"
+        className="bg-[#F7F4EE] border border-warm-border p-1 rounded-2xl grid grid-cols-2 gap-1 my-4 select-none"
       >
         <button
           type="button"
@@ -62,13 +62,13 @@ export default function SpaceSetupPage() {
             setTab("create");
             setError(null);
           }}
-          className={`min-h-[40px] text-xs font-bold rounded-lg transition ${
+          className={`min-h-[40px] text-xs font-bold rounded-xl transition ${
             tab === "create"
-              ? "bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#FFA259] text-stone-900 shadow-sm"
+              : "text-stone-600 hover:text-stone-900"
           }`}
         >
-          Buat Ruang Baru
+          Bikin Celengan Baru
         </button>
         <button
           type="button"
@@ -78,20 +78,20 @@ export default function SpaceSetupPage() {
             setTab("join");
             setError(null);
           }}
-          className={`min-h-[40px] text-xs font-bold rounded-lg transition ${
+          className={`min-h-[40px] text-xs font-bold rounded-xl transition ${
             tab === "join"
-              ? "bg-white dark:bg-slate-900 text-emerald-600 dark:text-emerald-400 shadow-xs"
-              : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
+              ? "bg-[#FFA259] text-stone-900 shadow-sm"
+              : "text-stone-600 hover:text-stone-900"
           }`}
         >
-          Gabung Pasangan
+          Gabung Celengan
         </button>
       </div>
 
       {error && (
         <div
           role="alert"
-          className="p-3.5 rounded-lg bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2.5 mb-4"
+          className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 mb-4 font-medium"
         >
           <AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
           <span>{error}</span>
@@ -108,8 +108,8 @@ export default function SpaceSetupPage() {
               type="text"
               required
               maxLength={100}
-              label="Nama Ruang / Celengan"
-              placeholder="Contoh: Rumah Impian / Celengan Bersama"
+              label="Nama Celengan Bersama"
+              placeholder="Contoh: Tabungan Nikah / Celengan Berdua"
             />
 
             <Input
@@ -117,19 +117,19 @@ export default function SpaceSetupPage() {
               name="nickname"
               type="text"
               maxLength={50}
-              label="Panggilan Anda di Ruang Ini"
-              placeholder="Contoh: Ayah / Papah / Mas"
+              label="Nama Panggilanmu di Celengan Ini"
+              placeholder="Contoh: Ayah / Mas / Sayang"
             />
 
             <Button
               type="submit"
               variant="primary"
               isLoading={isPending}
-              loadingText="Membuat Ruang..."
-              className="w-full mt-4"
+              loadingText="Menyiapkan Celengan..."
+              className="w-full mt-4 bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold rounded-xl border border-orange-300"
             >
               <PlusCircle className="w-4 h-4 mr-1" aria-hidden="true" />
-              Buat Ruang Sekarang
+              Mulai Celengan Sekarang
             </Button>
           </form>
         ) : (
@@ -140,10 +140,10 @@ export default function SpaceSetupPage() {
               type="text"
               maxLength={8}
               required
-              label="Kode Undangan dari Pasangan"
+              label="Kode Sambung dari Pasangan"
               placeholder="8 Huruf Kode (contoh: 8K7A2M9X)"
-              helperText="Minta pasanganmu membagikan kode undangan dari dasbor mereka."
-              className="font-mono tracking-widest uppercase text-center"
+              helperText="Minta pasanganmu membagikan kode sambung dari dasbor mereka."
+              className="font-mono tracking-widest uppercase text-center text-lg font-bold"
             />
 
             <Input
@@ -151,27 +151,27 @@ export default function SpaceSetupPage() {
               name="nickname"
               type="text"
               maxLength={50}
-              label="Panggilan Anda di Ruang Ini"
-              placeholder="Contoh: Bunda / Adek"
+              label="Nama Panggilanmu di Celengan Ini"
+              placeholder="Contoh: Bunda / Adek / Sayang"
             />
 
             <Button
               type="submit"
               variant="primary"
               isLoading={isPending}
-              loadingText="Menghubungkan..."
-              className="w-full mt-4"
+              loadingText="Menyambungkan..."
+              className="w-full mt-4 bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold rounded-xl border border-orange-300"
             >
               <UserPlus className="w-4 h-4 mr-1" aria-hidden="true" />
-              Gabung ke Ruang Pasangan
+              Gabung ke Celengan Pasangan
             </Button>
           </form>
         )}
       </div>
 
-      <div className="text-center safe-bottom">
-        <p className="text-[11px] text-slate-400">
-          Setiap pasangan hanya butuh satu orang yang membuat Ruang, dan satu lagi cukup bergabung.
+      <div className="text-center safe-bottom pt-4">
+        <p className="text-[11px] text-stone-500 font-medium leading-relaxed">
+          Cukup salah satu yang membuat celengan, pasangan tinggal memasukkan kode sambung untuk mulai mencatat berdua.
         </p>
       </div>
     </div>

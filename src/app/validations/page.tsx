@@ -52,37 +52,38 @@ export default async function ValidationsPage() {
       <div className="p-5 space-y-4 flex-1">
         {/* Header */}
         <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Link
               href="/dashboard"
-              className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300"
+              className="w-8 h-8 rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-600 hover:text-warm-espresso hover:border-warm-apricot transition shadow-2xs"
+              aria-label="Kembali ke Dasbor"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4" />
             </Link>
             <div>
-              <h1 className="text-lg font-black text-slate-900 dark:text-white">
-                Antrean Validasi Notif
+              <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
+                Tinjau Belanja Otomatis
               </h1>
-              <p className="text-[11px] text-slate-500">
-                Fitur 1: Sinkronisasi Otomatis Android
+              <p className="text-[11px] text-stone-500 font-medium">
+                Dari Notifikasi HP & Dompet Digital
               </p>
             </div>
           </div>
 
           <Link
             href="/space/settings#webhook"
-            className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 hover:underline"
+            className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white border border-warm-border text-stone-700 flex items-center gap-1.5 hover:border-warm-apricot hover:text-stone-900 transition shadow-2xs"
           >
-            <Smartphone className="w-3.5 h-3.5" />
-            Setup HP
+            <Smartphone className="w-3.5 h-3.5 text-orange-600" />
+            Sambungan HP
           </Link>
         </div>
 
         {/* Info Banner */}
-        <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 text-xs flex items-start gap-2.5">
-          <Sparkles className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
-          <p className="leading-tight text-[11px]">
-            Data di bawah ditangkap otomatis oleh MacroDroid saat notifikasi m-banking/e-wallet masuk. Anda tinggal klik <strong>Setuju Catat</strong> atau <strong>Tolak</strong>.
+        <div className="p-3.5 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-stone-800 text-xs flex items-start gap-2.5 shadow-2xs">
+          <Sparkles className="w-4 h-4 shrink-0 text-orange-600 mt-0.5" />
+          <p className="leading-relaxed text-[11px] text-stone-600">
+            Belanjaan dari notifikasi HP tersimpan di sini dulu. Kalian berdua bisa memeriksa dan memilih untuk memasukkannya ke kas bersama atau abaikan.
           </p>
         </div>
 
@@ -98,16 +99,16 @@ export default async function ValidationsPage() {
             ))}
           </div>
         ) : (
-          <div className="py-16 text-center space-y-3">
-            <div className="w-16 h-16 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-sm">
-              <CheckCircle2 className="w-8 h-8" />
+          <div className="py-20 text-center space-y-3">
+            <div className="w-12 h-12 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-orange-600 flex items-center justify-center mx-auto shadow-2xs">
+              <CheckCircle2 className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                Semua Notifikasi Bersih!
+              <h3 className="text-sm font-bold text-warm-espresso">
+                Semua Belanjaan Sudah Ditinjau
               </h3>
-              <p className="text-xs text-slate-400 max-w-xs mx-auto mt-1">
-                Tidak ada antrean validasi baru yang tertunda. Notifikasi transaksi baru dari ponsel akan otomatis muncul di sini.
+              <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-1 leading-relaxed">
+                Saat kamu atau pasangan bayar via QRIS atau transfer, notifikasi dari ponsel akan muncul di sini.
               </p>
             </div>
           </div>

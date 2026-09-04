@@ -30,12 +30,12 @@ export default function RegisterPage() {
       <div className="flex items-center gap-2 pt-4">
         <Link
           href="/"
-          className="w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          className="w-9 h-9 rounded-xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 shadow-2xs"
           aria-label="Kembali ke Beranda"
         >
           <PiggyBank className="w-5 h-5" />
         </Link>
-        <span className="font-bold text-slate-800 dark:text-slate-200 text-sm">
+        <span className="font-extrabold text-warm-espresso text-base tracking-tight">
           CelenganKita
         </span>
       </div>
@@ -43,18 +43,18 @@ export default function RegisterPage() {
       {/* Main Form */}
       <div className="my-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 dark:text-white">
-            Mulai Anggaran Bersama
+          <h1 className="text-2xl font-black text-warm-espresso tracking-tight">
+            Mulai Celengan Bersama
           </h1>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Buat akun untuk memulai ruang dompet dan mengundang pasanganmu.
+          <p className="text-xs text-stone-600 mt-1">
+            Buat akun untuk memulai celengan dan mengundang pasanganmu.
           </p>
         </div>
 
         {error && (
           <div
             role="alert"
-            className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2.5"
+            className="p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2 font-medium"
           >
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
@@ -69,7 +69,7 @@ export default function RegisterPage() {
             label="Nama Lengkap / Panggilan"
             required
             autoComplete="name"
-            placeholder="Contoh: Budi Pratama"
+            placeholder="Contoh: Budi / Mas Budi"
             icon={<User className="w-4 h-4" />}
           />
 
@@ -100,7 +100,7 @@ export default function RegisterPage() {
             type="submit"
             isLoading={isPending}
             loadingText="Mendaftarkan Akun..."
-            className="w-full mt-2"
+            className="w-full mt-2 bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold rounded-xl border border-orange-300"
           >
             Daftar & Buat Celengan
             <ArrowRight className="w-4 h-4" />
@@ -110,9 +110,9 @@ export default function RegisterPage() {
 
       {/* Footer link */}
       <div className="text-center safe-bottom">
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-stone-600">
           Sudah punya akun?{" "}
-          <Link href="/login" className="font-bold text-emerald-600 hover:underline">
+          <Link href="/login" className="font-bold text-orange-600 hover:underline">
             Masuk di Sini
           </Link>
         </p>

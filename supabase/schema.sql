@@ -104,6 +104,24 @@ CREATE TABLE IF NOT EXISTS public.pending_validations (
     resolved_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL
 );
 
+-- 7. TABEL RECEIPT_EVALUATIONS (Telemetri Riset KIE & Komparasi Skripsi: Spatial vs LLM)
+CREATE TABLE IF NOT EXISTS public.receipt_evaluations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    space_id UUID NOT NULL REFERENCES public.spaces(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    raw_text TEXT NOT NULL,
+    spatial_merchant TEXT,
+    spatial_amount NUMERIC(15, 2),
+    spatial_latency_ms INTEGER DEFAULT 0,
+    llm_merchant TEXT,
+    llm_amount NUMERIC(15, 2),
+    llm_latency_ms INTEGER DEFAULT 0,
+    llm_status TEXT DEFAULT 'pending',
+    actual_merchant TEXT NOT NULL,
+    actual_amount NUMERIC(15, 2) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
 
 -- ==============================================================================
 -- INDEXING UNTUK PERFORMA QUERY
@@ -113,6 +131,7 @@ CREATE INDEX IF NOT EXISTS idx_space_members_space ON public.space_members(space
 CREATE INDEX IF NOT EXISTS idx_transactions_space_date ON public.transactions(space_id, transaction_date DESC);
 CREATE INDEX IF NOT EXISTS idx_pending_space_status ON public.pending_validations(space_id, status) WHERE status = 'pending';
 CREATE INDEX IF NOT EXISTS idx_categories_space ON public.categories(space_id);
+CREATE INDEX IF NOT EXISTS idx_receipt_evaluations_space ON public.receipt_evaluations(space_id);
 
 
 -- ==============================================================================
@@ -190,6 +209,14 @@ CREATE POLICY "Menambah kategori baru pada space"
 ON public.categories FOR INSERT
 WITH CHECK (public.is_space_member(space_id));
 
+CREATE POLICY "Mengubah kategori kustom pada space sendiri"
+ON public.categories FOR UPDATE
+USING (is_system = false AND public.is_space_member(space_id));
+
+CREATE POLICY "Menghapus kategori kustom pada space sendiri"
+ON public.categories FOR DELETE
+USING (is_system = false AND public.is_space_member(space_id));
+
 -- RLS TRANSACTIONS
 CREATE POLICY "Melihat transaksi pada space sendiri"
 ON public.transactions FOR SELECT
@@ -219,6 +246,17 @@ USING (public.is_space_member(space_id));
 CREATE POLICY "Menghapus entri validasi"
 ON public.pending_validations FOR DELETE
 USING (public.is_space_member(space_id));
+
+-- RLS RECEIPT_EVALUATIONS (Telemetri Riset Skripsi)
+ALTER TABLE public.receipt_evaluations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Melihat evaluasi struk pada space sendiri"
+ON public.receipt_evaluations FOR SELECT
+USING (public.is_space_member(space_id));
+
+CREATE POLICY "Menambah evaluasi struk pada space sendiri"
+ON public.receipt_evaluations FOR INSERT
+WITH CHECK (public.is_space_member(space_id));
 
 
 -- ==============================================================================

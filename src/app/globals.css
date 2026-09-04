@@ -3,15 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #090d16;
-    --foreground: #f8fafc;
-  }
+  --background: #FFFDF8;
+  --foreground: #1C1917;
+  --card: #FFFFFF;
+  --border: #F3ECE2;
 }
 
 body {
@@ -24,9 +19,9 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Indikator fokus aksesibel (WCAG 2.4.7 Focus Visible) */
+/* Indikator fokus aksesibel presisi (WCAG 2.4.7 Focus Visible) */
 :focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid #FFA259;
   outline-offset: 2px;
 }
 
@@ -51,13 +46,8 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #FFEDB9;
   border-radius: 4px;
-}
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-thumb {
-    background: #334155;
-  }
 }
 
 /* Safe area insets untuk PWA Mobile (iOS Notch & Android Navigation Bar) */
@@ -66,4 +56,44 @@ body {
 }
 .safe-top {
   padding-top: max(1rem, env(safe-area-inset-top));
+}
+
+/* Warm Couple Palette Utility Fallbacks & Shadow Fallbacks */
+@layer utilities {
+  .bg-warm-apricot {
+    background-color: #FFA259 !important;
+  }
+  .bg-warm-coral {
+    background-color: #FF7E7E !important;
+  }
+  .bg-warm-honey {
+    background-color: #FFCB56 !important;
+  }
+  .bg-warm-cream {
+    background-color: #FFEDB9 !important;
+  }
+  .bg-warm-canvas {
+    background-color: #FFFDF8 !important;
+  }
+  .text-warm-coral {
+    color: #FF7E7E !important;
+  }
+  .text-warm-espresso {
+    color: #1C1917 !important;
+  }
+  .border-warm-border {
+    border-color: #F3ECE2 !important;
+  }
+  .border-warm-apricot {
+    border-color: #FFA259 !important;
+  }
+  .border-warm-honey {
+    border-color: #FFCB56 !important;
+  }
+  .shadow-xs {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  .shadow-2xs {
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+  }
 }
