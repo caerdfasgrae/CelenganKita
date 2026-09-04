@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PiggyBank, Heart, BellRing, ScanLine, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
+import { PiggyBank, BellRing, ScanLine, ArrowRight, ShieldCheck } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -14,8 +14,8 @@ export default function HomePage() {
             <span className="font-extrabold text-lg tracking-tight text-warm-espresso block leading-tight">
               CelenganKita
             </span>
-            <span className="flex items-center text-[11px] text-warm-coral font-bold gap-1">
-              Khusus Berdua <Heart className="w-2.5 h-2.5 fill-warm-coral" />
+            <span className="text-[11px] text-stone-500 font-medium">
+              Celengan Bersama Pasangan
             </span>
           </div>
         </div>
@@ -29,11 +29,6 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <div className="my-auto py-6 text-center space-y-4">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF5DC] border border-amber-200 text-stone-800 text-xs font-semibold shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 text-orange-600" />
-          Keuangan Rumah Tangga & Pasangan · Hangat & Terbuka
-        </div>
-
         <h1 className="text-3xl font-black text-warm-espresso leading-tight tracking-tight">
           Catat Belanja Berdua, <br />
           <span className="text-orange-600">Makin Dekat & Rukun</span>
