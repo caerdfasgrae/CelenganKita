@@ -52,40 +52,49 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Jika API key belum ada di header, cek body atau query parameter
-    if (!apiKey) {
-      apiKey =
-        (body.key as string) ||
-        (body.token as string) ||
-        (body.webhook_token as string) ||
-        request.nextUrl.searchParams.get("key") ||
-        request.nextUrl.searchParams.get("token") ||
-        null;
+    // 2. Hubungkan ke Ruang Anggaran (Space)
+    const supabase = createAdminClient();
+    let space: { id: string; name: string } | null = null;
+
+    if (apiKey) {
+      const hashedKey = await sha256(apiKey.trim());
+      const { data } = await supabase
+        .from("spaces")
+        .select("id, name")
+        .eq("webhook_token_hash", hashedKey)
+        .single();
+      space = data;
     }
 
-    if (!apiKey) {
+    const spaceIdParam =
+      (body.space_id as string) ||
+      (body.spaceId as string) ||
+      request.nextUrl.searchParams.get("space_id") ||
+      request.nextUrl.searchParams.get("spaceId");
+
+    if (!space && spaceIdParam) {
+      const { data } = await supabase
+        .from("spaces")
+        .select("id, name")
+        .eq("id", spaceIdParam)
+        .single();
+      space = data;
+    }
+
+    // Resolusi otomatis: Jika hanya ada 1 space di database (ruang kas bersama milik pengguna)
+    if (!space) {
+      const { data: spaces } = await supabase.from("spaces").select("id, name").limit(2);
+      if (spaces && spaces.length === 1) {
+        space = spaces[0];
+      }
+    }
+
+    if (!space) {
       return NextResponse.json(
         {
           error:
-            "Header 'X-Celengan-Key' atau parameter token wajib disertakan untuk menghubungkan ke Ruang Anggaran.",
+            "Kunci API atau parameter space_id wajib disertakan untuk menghubungkan ke Ruang Anggaran.",
         },
-        { status: 401 }
-      );
-    }
-
-    // 2. Hubungkan ke Ruang Anggaran (Space) melalui token hash
-    const hashedKey = await sha256(apiKey.trim());
-    const supabase = createAdminClient();
-
-    const { data: space, error: spaceError } = await supabase
-      .from("spaces")
-      .select("id, name")
-      .eq("webhook_token_hash", hashedKey)
-      .single();
-
-    if (spaceError || !space) {
-      return NextResponse.json(
-        { error: "Kunci API tidak valid atau Ruang Anggaran tidak ditemukan." },
         { status: 401 }
       );
     }
