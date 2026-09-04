@@ -238,3 +238,254 @@ INSERT INTO public.categories (name, type, icon, color, is_system) VALUES
 ('Investasi & Dividen', 'income', 'trending-up', '#047857', true),
 ('Pendapatan Sampingan', 'income', 'dollar-sign', '#34D399', true)
 ON CONFLICT DO NOTHING;
+
+
+-- ==============================================================================
+-- SECURITY DEFINER RPC FUNCTIONS (ATOMIC & STRICT SEARCH_PATH)
+-- ==============================================================================
+
+-- 1. join_space_by_code
+CREATE OR REPLACE FUNCTION public.join_space_by_code(
+  _invite_code text,
+  _nickname text DEFAULT 'Pasangan'
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_user_id uuid;
+  v_space_id uuid;
+  v_clean_code text;
+  v_clean_nickname text;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Autentikasi diperlukan' USING ERRCODE = '42501';
+  END IF;
+
+  v_clean_code := UPPER(TRIM(COALESCE(_invite_code, '')));
+  IF LENGTH(v_clean_code) <> 8 THEN
+    RAISE EXCEPTION 'Kode undangan tidak valid atau kedaluwarsa' USING ERRCODE = 'P0001';
+  END IF;
+
+  v_clean_nickname := COALESCE(NULLIF(TRIM(_nickname), ''), 'Pasangan');
+
+  SELECT id INTO v_space_id
+  FROM public.spaces
+  WHERE invite_code = v_clean_code;
+
+  IF v_space_id IS NULL THEN
+    RAISE EXCEPTION 'Kode undangan tidak valid atau kedaluwarsa' USING ERRCODE = 'P0001';
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM public.space_members
+    WHERE space_id = v_space_id AND user_id = v_user_id
+  ) THEN
+    RETURN jsonb_build_object(
+      'status', 'already_member',
+      'space_id', v_space_id
+    );
+  END IF;
+
+  INSERT INTO public.space_members (space_id, user_id, role, nickname)
+  VALUES (v_space_id, v_user_id, 'partner', v_clean_nickname)
+  ON CONFLICT (space_id, user_id) DO NOTHING;
+
+  RETURN jsonb_build_object(
+    'status', 'success',
+    'space_id', v_space_id
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.join_space_by_code(text, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.join_space_by_code(text, text) TO authenticated;
+
+-- 2. rotate_space_webhook_token
+CREATE OR REPLACE FUNCTION public.rotate_space_webhook_token(
+  _space_id uuid,
+  _new_hash text
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_user_id uuid;
+  v_clean_hash text;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Autentikasi diperlukan' USING ERRCODE = '42501';
+  END IF;
+
+  IF NOT public.is_space_member(_space_id) THEN
+    RAISE EXCEPTION 'Akses tidak diizinkan' USING ERRCODE = '42501';
+  END IF;
+
+  v_clean_hash := LOWER(TRIM(COALESCE(_new_hash, '')));
+  IF LENGTH(v_clean_hash) <> 64 THEN
+    RAISE EXCEPTION 'Format token hash tidak valid' USING ERRCODE = '22023';
+  END IF;
+
+  UPDATE public.spaces
+  SET webhook_token_hash = v_clean_hash,
+      updated_at = now()
+  WHERE id = _space_id;
+
+  RETURN jsonb_build_object(
+    'status', 'success',
+    'space_id', _space_id
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.rotate_space_webhook_token(uuid, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.rotate_space_webhook_token(uuid, text) TO authenticated;
+
+-- 3. approve_pending_validation_atomic
+CREATE OR REPLACE FUNCTION public.approve_pending_validation_atomic(
+  _validation_id uuid,
+  _category_id uuid,
+  _custom_amount numeric DEFAULT NULL,
+  _custom_description text DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_user_id uuid;
+  v_rec record;
+  v_final_amount numeric;
+  v_final_desc text;
+  v_new_tx_id uuid;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Autentikasi diperlukan' USING ERRCODE = '42501';
+  END IF;
+
+  UPDATE public.pending_validations
+  SET status = 'approved',
+      resolved_at = now(),
+      resolved_by = v_user_id
+  WHERE id = _validation_id
+    AND status = 'pending'
+  RETURNING space_id, parsed_type, parsed_amount, parsed_merchant, source_app, created_at
+  INTO v_rec;
+
+  IF v_rec IS NULL THEN
+    RETURN jsonb_build_object(
+      'status', 'already_resolved',
+      'message', 'Notifikasi transaksi ini sudah divalidasi sebelumnya.'
+    );
+  END IF;
+
+  IF NOT public.is_space_member(v_rec.space_id) THEN
+    RAISE EXCEPTION 'Akses tidak diizinkan' USING ERRCODE = '42501';
+  END IF;
+
+  v_final_amount := COALESCE(_custom_amount, v_rec.parsed_amount, 0);
+  IF v_final_amount <= 0 THEN
+    RAISE EXCEPTION 'Nominal transaksi harus lebih besar dari 0' USING ERRCODE = '22003';
+  END IF;
+
+  v_final_desc := COALESCE(
+    NULLIF(TRIM(_custom_description), ''),
+    v_rec.parsed_merchant,
+    v_rec.source_app || ' - Notifikasi Otomatis'
+  );
+
+  INSERT INTO public.transactions (
+    space_id,
+    user_id,
+    category_id,
+    type,
+    amount,
+    description,
+    source,
+    transaction_date
+  ) VALUES (
+    v_rec.space_id,
+    v_user_id,
+    _category_id,
+    v_rec.parsed_type,
+    v_final_amount,
+    v_final_desc,
+    'webhook',
+    v_rec.created_at
+  )
+  RETURNING id INTO v_new_tx_id;
+
+  RETURN jsonb_build_object(
+    'status', 'success',
+    'transaction_id', v_new_tx_id
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.approve_pending_validation_atomic(uuid, uuid, numeric, text) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.approve_pending_validation_atomic(uuid, uuid, numeric, text) TO authenticated;
+
+-- 4. reject_pending_validation_atomic
+CREATE OR REPLACE FUNCTION public.reject_pending_validation_atomic(
+  _validation_id uuid
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+DECLARE
+  v_user_id uuid;
+  v_space_id uuid;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RAISE EXCEPTION 'Autentikasi diperlukan' USING ERRCODE = '42501';
+  END IF;
+
+  SELECT space_id INTO v_space_id
+  FROM public.pending_validations
+  WHERE id = _validation_id;
+
+  IF v_space_id IS NULL THEN
+    RETURN jsonb_build_object(
+      'status', 'not_found',
+      'message', 'Notifikasi tidak ditemukan.'
+    );
+  END IF;
+
+  IF NOT public.is_space_member(v_space_id) THEN
+    RAISE EXCEPTION 'Akses tidak diizinkan' USING ERRCODE = '42501';
+  END IF;
+
+  UPDATE public.pending_validations
+  SET status = 'rejected',
+      resolved_at = now(),
+      resolved_by = v_user_id
+  WHERE id = _validation_id
+    AND status = 'pending';
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object(
+      'status', 'already_resolved',
+      'message', 'Notifikasi transaksi ini sudah divalidasi sebelumnya.'
+    );
+  END IF;
+
+  RETURN jsonb_build_object(
+    'status', 'success'
+  );
+END;
+$$;
+
+REVOKE ALL ON FUNCTION public.reject_pending_validation_atomic(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.reject_pending_validation_atomic(uuid) TO authenticated;
+

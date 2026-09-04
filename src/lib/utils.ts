@@ -20,17 +20,40 @@ export function formatRupiah(amount: number | null | undefined): string {
 }
 
 /**
- * Format tanggal ramah pengguna (contoh: "3 Sep 2026, 15:45")
+ * Format tanggal ramah pengguna dalam zona waktu WIB (contoh: "4 Sep 2026, 08:23 WIB")
  */
 export function formatTanggal(dateString: string | Date): string {
   const date = typeof dateString === "string" ? new Date(dateString) : dateString;
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "numeric",
-    month: "short",
+  return (
+    new Intl.DateTimeFormat("id-ID", {
+      timeZone: "Asia/Jakarta",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date) + " WIB"
+  );
+}
+
+/**
+ * Menghasilkan string YYYY-MM-DDTHH:mm dalam zona waktu WIB (Asia/Jakarta)
+ * untuk nilai default input <input type="datetime-local">
+ */
+export function getWIBDateTimeLocal(date: Date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta",
     year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(date);
+    hour12: false,
+  });
+
+  const parts = formatter.formatToParts(date);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value || "00";
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}`;
 }
 
 /**

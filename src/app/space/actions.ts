@@ -17,111 +17,160 @@ function generateInviteCode(): string {
 }
 
 export async function createNewSpace(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { error: "Sesi telah berakhir, silakan login kembali." };
-  }
+    if (!user) {
+      return { error: "Sesi telah berakhir, silakan login kembali." };
+    }
 
-  const spaceName = formData.get("spaceName") as string;
-  const nickname = formData.get("nickname") as string;
+    const rawSpaceName = (formData.get("spaceName") as string)?.trim();
+    const rawNickname = (formData.get("nickname") as string)?.trim();
 
-  if (!spaceName) {
-    return { error: "Nama Ruang Anggaran wajib diisi." };
-  }
+    if (!rawSpaceName) {
+      return { error: "Nama Ruang Anggaran wajib diisi." };
+    }
 
-  // Generate Token Webhook acak untuk MacroDroid
-  const rawWebhookToken = `ckp_live_${crypto.randomBytes(24).toString("hex")}`;
-  const webhookTokenHash = await sha256(rawWebhookToken);
-  const inviteCode = generateInviteCode();
+    const spaceName = rawSpaceName.slice(0, 100);
+    const nickname = (rawNickname ? rawNickname.slice(0, 50) : "") || "Saya";
 
-  // 1. Buat Space baru
-  const { data: space, error: spaceError } = await supabase
-    .from("spaces")
-    .insert({
+    // Generate Token Webhook awal untuk MacroDroid
+    const rawWebhookToken = `ckp_live_${crypto.randomBytes(24).toString("hex")}`;
+    const webhookTokenHash = await sha256(rawWebhookToken);
+    const inviteCode = generateInviteCode();
+    const spaceId = crypto.randomUUID();
+
+    // 1. Buat Space baru
+    const { error: spaceError } = await supabase.from("spaces").insert({
+      id: spaceId,
       name: spaceName,
       currency: "IDR",
       invite_code: inviteCode,
       webhook_token_hash: webhookTokenHash,
-    })
-    .select("id")
-    .single();
+    });
 
-  if (spaceError || !space) {
-    return { error: spaceError?.message || "Gagal membuat ruang anggaran." };
+    if (spaceError) {
+      console.error("Gagal membuat space:", spaceError);
+      return { error: "Tidak dapat membuat ruang anggaran. Silakan coba lagi." };
+    }
+
+    // 2. Masukkan user sebagai owner di space_members
+    const { error: memberError } = await supabase.from("space_members").insert({
+      space_id: spaceId,
+      user_id: user.id,
+      role: "owner",
+      nickname,
+    });
+
+    if (memberError) {
+      console.error("Gagal mendaftarkan anggota owner:", memberError);
+      return { error: "Gagal menghubungkan profil ke ruang anggaran." };
+    }
+
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
+  } catch (err: any) {
+    if (err?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
+    console.error("Unexpected error in createNewSpace:", err);
+    return { error: "Terjadi kesalahan sistem saat membuat ruang anggaran." };
   }
-
-  // 2. Masukkan user sebagai owner di space_members
-  const { error: memberError } = await supabase.from("space_members").insert({
-    space_id: space.id,
-    user_id: user.id,
-    role: "owner",
-    nickname: nickname || "Saya",
-  });
-
-  if (memberError) {
-    return { error: memberError.message };
-  }
-
-  revalidatePath("/", "layout");
-  redirect("/dashboard");
 }
 
 export async function joinExistingSpace(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return { error: "Sesi telah berakhir, silakan login kembali." };
+    if (!user) {
+      return { error: "Sesi telah berakhir, silakan login kembali." };
+    }
+
+    const rawInviteCode = (formData.get("inviteCode") as string)?.trim().toUpperCase();
+    const rawNickname = (formData.get("nickname") as string)?.trim();
+
+    if (!rawInviteCode || rawInviteCode.length !== 8) {
+      return { error: "Kode undangan harus terdiri dari 8 karakter." };
+    }
+
+    const nickname = (rawNickname ? rawNickname.slice(0, 50) : "") || "Pasangan";
+
+    // Panggil RPC SECURITY DEFINER join_space_by_code
+    // Memverifikasi kode, mencegah enumerasi, dan atomic insert ke space_members
+    const { data: result, error: rpcError } = await supabase.rpc("join_space_by_code", {
+      _invite_code: rawInviteCode,
+      _nickname: nickname,
+    });
+
+    if (rpcError) {
+      console.error("RPC join_space_by_code error:", rpcError);
+      return { error: "Kode undangan tidak valid atau kedaluwarsa." };
+    }
+
+    const status = (result as any)?.status;
+    if (status === "success" || status === "already_member") {
+      revalidatePath("/", "layout");
+      redirect("/dashboard");
+    }
+
+    return { error: "Kode undangan tidak valid atau kedaluwarsa." };
+  } catch (err: any) {
+    if (err?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw err;
+    }
+    console.error("Unexpected error in joinExistingSpace:", err);
+    return { error: "Terjadi kesalahan sistem saat bergabung ke ruang pasangan." };
   }
+}
 
-  const inviteCode = (formData.get("inviteCode") as string)?.trim().toUpperCase();
-  const nickname = formData.get("nickname") as string;
+/**
+ * Rotasi Kunci Webhook MacroDroid (Instant Invalidation)
+ * Menghasilkan token baru, menyimpan hash-nya di DB, dan mengembalikan token plaintext sekali untuk disalin user.
+ */
+export async function rotateWebhookKey(spaceId: string) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!inviteCode || inviteCode.length !== 8) {
-    return { error: "Kode undangan harus terdiri dari 8 karakter." };
+    if (!user) {
+      return { error: "Sesi telah berakhir, silakan login kembali." };
+    }
+
+    if (!spaceId) {
+      return { error: "ID Ruang tidak valid." };
+    }
+
+    // Generate token baru berentropi tinggi
+    const rawToken = `ckp_live_${crypto.randomBytes(24).toString("hex")}`;
+    const newHash = await sha256(rawToken);
+
+    // Update token hash via RPC SECURITY DEFINER
+    const { error: rpcError } = await supabase.rpc("rotate_space_webhook_token", {
+      _space_id: spaceId,
+      _new_hash: newHash,
+    });
+
+    if (rpcError) {
+      console.error("Gagal merotasi webhook key:", rpcError);
+      return { error: "Gagal memperbarui kunci webhook. Pastikan Anda memiliki akses." };
+    }
+
+    revalidatePath("/space/settings");
+    // Kembalikan token plaintext sekali saja kepada klien (tidak pernah disimpan plaintext di DB)
+    return {
+      success: true,
+      token: rawToken,
+    };
+  } catch (err: any) {
+    console.error("Unexpected error in rotateWebhookKey:", err);
+    return { error: "Terjadi kesalahan sistem saat merotasi kunci webhook." };
   }
-
-  // 1. Cari Space berdasarkan invite_code
-  const { data: space, error: spaceError } = await supabase
-    .from("spaces")
-    .select("id, name")
-    .eq("invite_code", inviteCode)
-    .single();
-
-  if (spaceError || !space) {
-    return { error: "Kode undangan tidak ditemukan. Pastikan kodenya benar." };
-  }
-
-  // 2. Cek apakah sudah bergabung
-  const { data: existingMember } = await supabase
-    .from("space_members")
-    .select("id")
-    .eq("space_id", space.id)
-    .eq("user_id", user.id)
-    .single();
-
-  if (existingMember) {
-    redirect("/dashboard");
-  }
-
-  // 3. Masukkan sebagai partner
-  const { error: joinError } = await supabase.from("space_members").insert({
-    space_id: space.id,
-    user_id: user.id,
-    role: "partner",
-    nickname: nickname || "Pasangan",
-  });
-
-  if (joinError) {
-    return { error: joinError.message };
-  }
-
-  revalidatePath("/", "layout");
-  redirect("/dashboard");
 }

@@ -16,7 +16,10 @@
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+*.key
+*.cert
 
 # debug logs
 npm-debug.log*
@@ -24,7 +27,12 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files (PENTING: Jangan upload secret key ke GitHub)
+.env
 .env*.local
+.env.production
+.env.development
+.env.test
+!.env.example
 
 # vercel
 .vercel
@@ -32,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# editor & IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+

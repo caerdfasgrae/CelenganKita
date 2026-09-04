@@ -1,6 +1,6 @@
-const CACHE_NAME = "celengankita-v1";
+const CACHE_NAME = "celengankita-v2";
+// Hanya cache file statis murni (jangan cache rute HTML atau API finansial)
 const ASSETS_TO_CACHE = [
-  "/",
   "/manifest.json",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
@@ -32,34 +32,41 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Hanya cache GET requests untuk aset statis / icon / manifest
   if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
 
-  // Jangan cache API atau Supabase requests
-  if (url.pathname.startsWith("/api") || url.hostname.includes("supabase.co")) {
+  // Jangan pernah cache permintaan API, Supabase, atau halaman HTML (jaga privasi keuangan)
+  if (
+    url.pathname.startsWith("/api") ||
+    url.hostname.includes("supabase.co") ||
+    event.request.mode === "navigate"
+  ) {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((networkResponse) => {
-        // Cache statis font / images
-        if (
-          networkResponse.status === 200 &&
-          (url.pathname.startsWith("/icons") || url.pathname.endsWith(".png") || url.pathname.endsWith(".svg"))
-        ) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+  // Hanya layani dari cache untuk ikon dan aset statis terdaftar
+  if (
+    url.pathname.startsWith("/icons") ||
+    url.pathname === "/manifest.json" ||
+    url.pathname.endsWith(".png") ||
+    url.pathname.endsWith(".svg")
+  ) {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
         }
-        return networkResponse;
-      });
-    })
-  );
+        return fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        });
+      })
+    );
+  }
 });

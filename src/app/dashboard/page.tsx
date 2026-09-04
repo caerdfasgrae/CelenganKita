@@ -14,7 +14,6 @@ import {
   PlusCircle,
   Users,
   ChevronRight,
-  Sparkles,
 } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -87,15 +86,15 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <div className="p-5 space-y-5 flex-1">
+      <div className="p-4 space-y-4 flex-1">
         {/* Top Bar Header */}
-        <div className="flex items-center justify-between pt-2">
+        <header className="flex items-center justify-between pt-2">
           <div>
             <div className="flex items-center gap-1.5">
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Ruang Dompet
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" aria-hidden="true"></span>
             </div>
             <h1 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
               {space.name}
@@ -104,129 +103,129 @@ export default async function DashboardPage() {
 
           <Link
             href="/space/settings"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition"
+            aria-label="Pengaturan ruang dan anggota"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
           >
-            <Users className="w-3.5 h-3.5 text-emerald-600" />
+            <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
             <span>{members?.length || 1} Pasangan</span>
           </Link>
-        </div>
+        </header>
 
         {/* Banner Antrean Validasi Notifikasi (Fitur 1) */}
         {(pendingCount ?? 0) > 0 && (
           <Link
             href="/validations"
-            className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border border-amber-300 dark:border-amber-700 flex items-center justify-between transition hover:opacity-95"
+            aria-label={`${pendingCount} notifikasi m-banking menunggu validasi`}
+            className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-300 dark:border-amber-700/80 flex items-center justify-between transition hover:opacity-95"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20">
-                <BellRing className="w-5 h-5 animate-bounce" />
+              <div className="w-9 h-9 rounded-lg bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <BellRing className="w-5 h-5" aria-hidden="true" />
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-900 dark:text-white">
-                  {pendingCount} Notifikasi Menunggu Validasi!
+                  {pendingCount} Notifikasi Perlu Divalidasi!
                 </p>
                 <p className="text-[11px] text-slate-600 dark:text-slate-300">
-                  Data otomatis dari HP Anda/Pasangan siap diverifikasi.
+                  Data otomatis dari ponsel siap dikonfirmasi ke kas.
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" aria-hidden="true" />
           </Link>
         )}
 
         {/* Card Saldo Utama */}
-        <div className="p-5 rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 text-white shadow-xl shadow-emerald-700/20 relative overflow-hidden">
-          {/* Decorative Pattern */}
-          <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 bg-white/10 rounded-full blur-xl pointer-events-none" />
+        <section
+          aria-label="Ringkasan Saldo dan Anggaran Bulan Ini"
+          className="p-5 rounded-xl bg-emerald-700 text-white shadow-md shadow-emerald-900/10 space-y-4"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-emerald-100">
+              Sisa Anggaran Bersama Bulan Ini
+            </span>
+            <div className="p-1.5 rounded-lg bg-white/15">
+              <PiggyBank className="w-4 h-4 text-emerald-200" aria-hidden="true" />
+            </div>
+          </div>
 
-          <div className="relative z-10 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-emerald-100">
-                Sisa Anggaran Bersama Bulan Ini
-              </span>
-              <div className="p-1.5 rounded-xl bg-white/15 backdrop-blur-xs">
-                <PiggyBank className="w-4 h-4 text-emerald-200" />
+          <div>
+            <p className="text-3xl font-black tracking-tight">
+              {formatRupiah(balance)}
+            </p>
+          </div>
+
+          {/* Income & Expense Breakdown */}
+          <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/20">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/40 flex items-center justify-center text-emerald-100 shrink-0">
+                <ArrowDownLeft className="w-4 h-4" aria-hidden="true" />
+              </div>
+              <div>
+                <p className="text-[10px] text-emerald-200 uppercase font-semibold">
+                  Pemasukan
+                </p>
+                <p className="text-xs font-bold text-white tracking-tight">
+                  + {formatRupiah(totalIncome)}
+                </p>
               </div>
             </div>
 
-            <div>
-              <p className="text-3xl font-black tracking-tight">
-                {formatRupiah(balance)}
-              </p>
-            </div>
-
-            {/* Income & Expense Breakdown */}
-            <div className="grid grid-cols-2 gap-3 pt-2 border-t border-white/15">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-500/30 flex items-center justify-center text-emerald-200 shrink-0">
-                  <ArrowDownLeft className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-emerald-200 uppercase font-semibold">
-                    Pemasukan
-                  </p>
-                  <p className="text-xs font-bold text-white">
-                    {formatRupiah(totalIncome)}
-                  </p>
-                </div>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-rose-500/40 flex items-center justify-center text-rose-100 shrink-0">
+                <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
               </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-rose-500/30 flex items-center justify-center text-rose-200 shrink-0">
-                  <ArrowUpRight className="w-4 h-4" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-rose-200 uppercase font-semibold">
-                    Pengeluaran
-                  </p>
-                  <p className="text-xs font-bold text-white">
-                    {formatRupiah(totalExpense)}
-                  </p>
-                </div>
+              <div>
+                <p className="text-[10px] text-rose-200 uppercase font-semibold">
+                  Pengeluaran
+                </p>
+                <p className="text-xs font-bold text-white tracking-tight">
+                  - {formatRupiah(totalExpense)}
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Quick Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Quick Action Buttons (Touch Target >= 44px, rounded-lg) */}
+        <div className="grid grid-cols-2 gap-2.5">
           <Link
             href="/transactions/new"
-            className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition group"
+            className="min-h-[48px] p-3 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition group"
           >
-            <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition">
-              <PlusCircle className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition shrink-0">
+              <PlusCircle className="w-4 h-4" aria-hidden="true" />
             </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                 Catat Transaksi
               </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                Pemasukan / Pengeluaran
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                Manual
               </p>
             </div>
           </Link>
 
           <Link
             href="/transactions/new?mode=ocr"
-            className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 flex items-center gap-3 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition group"
+            className="min-h-[48px] p-3 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center gap-2.5 hover:bg-slate-100 dark:hover:bg-slate-700 transition group"
           >
-            <div className="p-2 rounded-xl bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-400 group-hover:scale-105 transition">
-              <ScanLine className="w-5 h-5" />
+            <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400 group-hover:scale-105 transition shrink-0">
+              <ScanLine className="w-4 h-4" aria-hidden="true" />
             </div>
-            <div>
-              <p className="text-xs font-bold text-slate-900 dark:text-white">
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                 Scan Struk (OCR)
               </p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                Kamera / Galeri HP
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
+                Kamera / Galeri
               </p>
             </div>
           </Link>
         </div>
 
         {/* Transaksi Terbaru */}
-        <div className="space-y-3 pt-2">
+        <section aria-label="Riwayat Transaksi Terkini" className="space-y-2.5 pt-1">
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               Riwayat Transaksi Terkini
@@ -246,32 +245,30 @@ export default async function DashboardPage() {
                 return (
                   <div
                     key={tx.id}
-                    className="p-3 rounded-2xl bg-white dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                    className="p-3 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 flex items-center justify-between transition hover:border-slate-300 dark:hover:border-slate-600"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0 flex-1 mr-2">
                       <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
                           isExpense
-                            ? "bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400"
-                            : "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400"
+                            ? "bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400"
+                            : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400"
                         }`}
                       >
                         {isExpense ? (
-                          <TrendingDown className="w-4 h-4" />
+                          <TrendingDown className="w-4 h-4" aria-hidden="true" />
                         ) : (
-                          <TrendingUp className="w-4 h-4" />
+                          <TrendingUp className="w-4 h-4" aria-hidden="true" />
                         )}
                       </div>
-                      <div>
-                        <p className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                           {tx.description || tx.categories?.name || "Transaksi"}
                         </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-slate-500 dark:text-slate-400">
-                            {formatTanggal(tx.transaction_date)}
-                          </span>
+                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
+                          <span>{formatTanggal(tx.transaction_date)}</span>
                           {tx.source !== "manual" && (
-                            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
+                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
                               {tx.source === "webhook" ? "Otomatis" : "OCR"}
                             </span>
                           )}
@@ -281,13 +278,13 @@ export default async function DashboardPage() {
 
                     <div className="text-right shrink-0">
                       <p
-                        className={`text-xs font-black ${
+                        className={`text-xs font-black tracking-tight ${
                           isExpense
                             ? "text-rose-600 dark:text-rose-400"
                             : "text-emerald-600 dark:text-emerald-400"
                         }`}
                       >
-                        {isExpense ? "-" : "+"}
+                        {isExpense ? "- " : "+ "}
                         {formatRupiah(tx.amount)}
                       </p>
                       <p className="text-[10px] text-slate-400">
@@ -299,19 +296,19 @@ export default async function DashboardPage() {
               })}
             </div>
           ) : (
-            <div className="p-8 rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-2">
-              <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
-                <PiggyBank className="w-5 h-5" />
+            <div className="p-8 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-2">
+              <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto">
+                <PiggyBank className="w-5 h-5" aria-hidden="true" />
               </div>
               <p className="text-xs font-bold text-slate-700 dark:text-slate-300">
                 Belum ada transaksi bulan ini
               </p>
               <p className="text-[11px] text-slate-400 max-w-xs mx-auto">
-                Mulai catat transaksi manual atau sambungkan notifikasi e-wallet HP kamu.
+                Mulai catat transaksi manual atau sambungkan notifikasi e-wallet ponsel Anda.
               </p>
             </div>
           )}
-        </div>
+        </section>
       </div>
 
       {/* Bottom Navigation */}

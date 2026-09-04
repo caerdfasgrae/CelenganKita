@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Camera, Image as ImageIcon, Loader2, Sparkles, Check, AlertCircle, RefreshCw } from "lucide-react";
-import { createWorker } from "tesseract.js";
-import { cleanCurrencyString, formatRupiah } from "@/lib/utils";
+import { Camera, Image as ImageIcon, Loader2, Sparkles, AlertCircle } from "lucide-react";
+import { cleanCurrencyString } from "@/lib/utils";
 
 interface OCRScannerProps {
   onDetected: (amount: number, merchantSuggestion: string | null, rawText: string) => void;
@@ -55,10 +54,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       const r = d[i];
       const g = d[i + 1];
       const b = d[i + 2];
-      // Luminance formula
       const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-
-      // Simple threshold contrast enhancement
       const contrasted = gray > 140 ? Math.min(255, gray * 1.2) : Math.max(0, gray * 0.8);
 
       d[i] = contrasted;
@@ -83,7 +79,6 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
     // 1. Merchant biasanya ada di 1-3 baris teratas struk
     for (let i = 0; i < Math.min(4, lines.length); i++) {
       const line = lines[i];
-      // Hindari kata umum seperti 'STRUK', 'NOTA', 'SELAMAT DATANG'
       if (!/struk|nota|selamat datang|kasir|tanggal|no\.|transaksi/i.test(line) && line.length > 3) {
         detectedMerchant = line;
         break;
@@ -94,7 +89,6 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
     for (let i = lines.length - 1; i >= 0; i--) {
       const line = lines[i];
       if (/total|grand total|bayar|netto|tagihan|jumlah/i.test(line) && !/kembali|diskon|item|qty/i.test(line)) {
-        // Ambil angka di baris ini
         const match = line.match(/(?:rp|idr)?\s*([0-9.,]{3,})/i);
         if (match && match[1]) {
           const val = cleanCurrencyString(match[1]);
@@ -151,10 +145,12 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       setProgressPercent(25);
       const preprocessedUrl = preprocessImage(img);
 
-      setProgressStatus("Memuat OCR Engine di HP...");
+      setProgressStatus("Memuat modul OCR...");
       setProgressPercent(40);
 
-      // Jalankan worker Tesseract di browser pengguna (0 server cost)
+      // Dynamic import tesseract.js: Hanya dimuat saat pemrosesan gambar berlangsung (Performance / Bundle Optimization)
+      const { createWorker } = await import("tesseract.js");
+
       const worker = await createWorker("ind+eng", undefined, {
         logger: (m) => {
           if (m.status === "recognizing text") {
@@ -173,7 +169,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       const { amount, merchant } = extractReceiptData(data.text);
 
       if (amount <= 0) {
-        setError("Teks terbaca, namun total angka tidak terdeteksi jelas. Silakan masukkan nominal manual atau foto ulang.");
+        setError("Teks terbaca, namun total nominal tidak terdeteksi jelas. Silakan periksa atau masukkan nominal manual.");
       }
 
       onDetected(amount, merchant, data.text);
@@ -193,7 +189,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
   }
 
   return (
-    <div className="p-4 rounded-3xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-4">
+    <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 space-y-4">
       {/* Hidden input file untuk Kamera */}
       <input
         ref={cameraInputRef}
@@ -218,7 +214,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-xl bg-teal-100 dark:bg-teal-900/60 text-teal-600 dark:text-teal-400">
+          <div className="p-2 rounded-lg bg-teal-100 dark:bg-teal-900/60 text-teal-600 dark:text-teal-400">
             <Sparkles className="w-4 h-4" />
           </div>
           <div>
@@ -234,7 +230,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
           <button
             type="button"
             onClick={onCancel}
-            className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1"
           >
             Tutup
           </button>
@@ -243,7 +239,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
 
       {/* Image Preview & Scanner Visual */}
       {previewImage ? (
-        <div className="relative rounded-2xl overflow-hidden aspect-[4/3] bg-black/5 flex items-center justify-center border border-slate-200 dark:border-slate-700">
+        <div className="relative rounded-lg overflow-hidden aspect-[4/3] bg-black/5 flex items-center justify-center border border-slate-200 dark:border-slate-700">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={previewImage}
@@ -264,8 +260,8 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
           )}
         </div>
       ) : (
-        <div className="py-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center justify-center text-center p-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2">
+        <div className="py-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg flex flex-col items-center justify-center text-center p-4">
+          <div className="w-11 h-11 rounded-lg bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-2">
             <Camera className="w-6 h-6" />
           </div>
           <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -278,19 +274,19 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
       )}
 
       {error && (
-        <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+        <div role="alert" className="p-3 rounded-lg bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
           <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Action Buttons: Kamera vs Galeri */}
+      {/* Action Buttons: Kamera vs Galeri (Touch targets >= 44px) */}
       <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           disabled={isProcessing}
           onClick={() => cameraInputRef.current?.click()}
-          className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] disabled:opacity-50"
+          className="min-h-[44px] px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.98] disabled:opacity-50"
         >
           <Camera className="w-4 h-4" />
           Ambil Kamera
@@ -300,7 +296,7 @@ export default function OCRScanner({ onDetected, onCancel }: OCRScannerProps) {
           type="button"
           disabled={isProcessing}
           onClick={() => fileInputRef.current?.click()}
-          className="py-2.5 px-3 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-50"
+          className="min-h-[44px] px-3 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-[0.98] disabled:opacity-50"
         >
           <ImageIcon className="w-4 h-4" />
           Pilih Galeri
