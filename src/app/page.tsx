@@ -16,9 +16,9 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between max-w-6xl mx-auto w-full px-5 sm:px-8 py-4 sm:py-6 lg:py-8 select-none">
+    <div className="min-h-screen flex flex-col justify-between max-w-6xl mx-auto w-full px-5 sm:px-8 pt-safe pb-8 sm:py-6 lg:py-8 select-none">
       {/* Header / Brand with Pingu & Penga */}
-      <header className="flex items-center justify-between pt-1 sm:pt-2 border-b border-warm-border/50 pb-4">
+      <header className="flex items-center justify-between pt-3 sm:pt-4 border-b border-warm-border/50 pb-4">
         <div className="flex items-center gap-3">
           <PenguinMascot variant="pair" expression="happy" size="sm" />
           <div>

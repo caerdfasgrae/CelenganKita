@@ -1,90 +1,38 @@
-import { Category } from "@/types/database";
-import { getWIBDateTimeLocal } from "@/lib/utils";
-
-export interface ParsedQuickExpense {
-  amount: number;
-  type: "income" | "expense";
-  description: string;
-  matchedCategoryName: string | null;
-  suggestedCategoryId: string;
-  transactionDate: string; // Format: YYYY-MM-DDTHH:mm
-  matchedDateLabel: string | null;
-}
-
-export type QuickInputStatus =
-  | "empty"
-  | "missing_amount"
-  | "security_blocked"
-  | "amount_exceeded"
-  | "valid";
-
-export interface QuickInputValidation {
-  isValid: boolean;
-  status: QuickInputStatus;
-  message: string | null;
-  parsed: ParsedQuickExpense | null;
-}
-
-export interface ExtractedDateTime {
-  iso: string; // YYYY-MM-DDTHH:mm
-  label: string | null;
-  matchedTokens: string[];
-  isExplicit: boolean;
-}
-
-const INDO_MONTHS: Record<string, number> = {
-  januari: 0, jan: 0,
-  februari: 1, feb: 1,
-  maret: 2, mar: 2,
-  april: 3, apr: 3,
-  mei: 4,
-  juni: 5, jun: 5,
-  juli: 6, jul: 6,
-  agustus: 7, agt: 7, agu: 7,
-  september: 8, sep: 8,
-  oktober: 9, okt: 9,
-  november: 10, nov: 10,
-  desember: 11, des: 11,
+const INDO_MONTHS = {
+  januari: 0, jan: 0, februari: 1, feb: 1, maret: 2, mar: 2,
+  april: 3, apr: 3, mei: 4, juni: 5, jun: 5, juli: 6, jul: 6,
+  agustus: 7, agt: 7, agu: 7, september: 8, sep: 8,
+  oktober: 9, okt: 9, november: 10, nov: 10, desember: 11, des: 11,
 };
 
-/**
- * Ekstraksi tanggal dan waktu dari bahasa alami Indonesia (WIB).
- * Mendukung ekspresi relatif (kemarin, tadi siang, semalam) dan eksplisit (tgl 5, 28 agustus, 14:30).
- */
-export function extractDateTimeIndo(
-  rawText: string,
-  referenceDate?: Date
-): ExtractedDateTime {
-  const baseWib = getWIBDateTimeLocal(referenceDate || new Date());
-  const [datePart, timePart] = baseWib.split("T");
+function extractDateTimeIndo(raw, baseIso = "2026-09-07T11:40") {
+  const [datePart, timePart] = baseIso.split("T");
   const [baseY, baseM, baseD] = datePart.split("-").map(Number);
   const [baseH, baseMin] = timePart.split(":").map(Number);
-
-  // Inisialisasi Date object sesuai komponen tanggal WIB saat ini
   const dateObj = new Date(baseY, baseM - 1, baseD, baseH, baseMin);
 
-  const lower = rawText.toLowerCase();
-  const matchedTokens: string[] = [];
-  let dayLabel: string | null = null;
-  let timeLabel: string | null = null;
+  let lower = raw.toLowerCase();
+  let matchedTokens = [];
+  let dayLabel = null;
+  let timeLabel = null;
   let dateChanged = false;
   let timeChanged = false;
 
-  // 1. Ekspresi Hari Relatif
+  // 1. Relative days
   if (/\b(?:kemarin\s+lusa|kmrn\s+lusa)\b/i.test(lower)) {
-    const m = lower.match(/\b(?:kemarin\s+lusa|kmrn\s+lusa)\b/i)!;
+    const m = lower.match(/\b(?:kemarin\s+lusa|kmrn\s+lusa)\b/i);
     dateObj.setDate(dateObj.getDate() - 2);
     dayLabel = "Kemarin lusa";
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\b(?:kemarin|kmrn)\b/i.test(lower)) {
-    const m = lower.match(/\b(?:kemarin|kmrn)\b/i)!;
+    const m = lower.match(/\b(?:kemarin|kmrn)\b/i);
     dateObj.setDate(dateObj.getDate() - 1);
     dayLabel = "Kemarin";
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\bsemalam\b/i.test(lower)) {
-    const m = lower.match(/\bsemalam\b/i)!;
+    const m = lower.match(/\bsemalam\b/i);
     dateObj.setDate(dateObj.getDate() - 1);
     dateObj.setHours(20, 0, 0, 0);
     dayLabel = "Semalam";
@@ -92,7 +40,7 @@ export function extractDateTimeIndo(
     dateChanged = true;
     timeChanged = true;
   } else if (/\btadi\s+malam\b/i.test(lower)) {
-    const m = lower.match(/\btadi\s+malam\b/i)!;
+    const m = lower.match(/\btadi\s+malam\b/i);
     dateObj.setDate(dateObj.getDate() - 1);
     dateObj.setHours(20, 0, 0, 0);
     dayLabel = "Tadi malam";
@@ -100,42 +48,40 @@ export function extractDateTimeIndo(
     dateChanged = true;
     timeChanged = true;
   } else if (/\b(\d+)\s*hari\s+lalu\b/i.test(lower)) {
-    const m = lower.match(/\b(\d+)\s*hari\s+lalu\b/i)!;
+    const m = lower.match(/\b(\d+)\s*hari\s+lalu\b/i);
     const n = parseInt(m[1], 10);
     dateObj.setDate(dateObj.getDate() - n);
     dayLabel = `${n} hari lalu`;
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\b(\d+)\s*minggu\s+lalu\b/i.test(lower)) {
-    const m = lower.match(/\b(\d+)\s*minggu\s+lalu\b/i)!;
+    const m = lower.match(/\b(\d+)\s*minggu\s+lalu\b/i);
     const n = parseInt(m[1], 10);
     dateObj.setDate(dateObj.getDate() - n * 7);
     dayLabel = `${n} minggu lalu`;
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\blusa\b/i.test(lower)) {
-    const m = lower.match(/\blusa\b/i)!;
+    const m = lower.match(/\blusa\b/i);
     dateObj.setDate(dateObj.getDate() + 2);
     dayLabel = "Lusa";
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\bbesok\b/i.test(lower)) {
-    const m = lower.match(/\bbesok\b/i)!;
+    const m = lower.match(/\bbesok\b/i);
     dateObj.setDate(dateObj.getDate() + 1);
     dayLabel = "Besok";
     matchedTokens.push(m[0]);
     dateChanged = true;
   } else if (/\bhari\s+ini\b/i.test(lower)) {
-    const m = lower.match(/\bhari\s+ini\b/i)!;
+    const m = lower.match(/\bhari\s+ini\b/i);
     dayLabel = "Hari ini";
     matchedTokens.push(m[0]);
     dateChanged = true;
   }
 
-  // 2. Format Tanggal + Bulan Eksplisit (misal: "5 sep", "28 agustus")
-  const dmMatch = lower.match(
-    /\b(\d{1,2})\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember|jan|feb|mar|apr|mei|jun|jul|agu|agt|sep|okt|nov|des)\b/i
-  );
+  // 2. Explicit date: Day + Month (e.g. "5 sep", "28 agustus")
+  const dmMatch = lower.match(/\b(\d{1,2})\s+(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember|jan|feb|mar|apr|mei|jun|jul|agu|agt|sep|okt|nov|des)\b/i);
   if (dmMatch && !dateChanged) {
     const d = parseInt(dmMatch[1], 10);
     const mKey = dmMatch[2].toLowerCase();
@@ -149,7 +95,7 @@ export function extractDateTimeIndo(
     }
   }
 
-  // 3. Prefix "tgl" atau "tanggal" (misal: "tgl 5", "tanggal 28")
+  // 3. Prefix tgl / tanggal (e.g. "tgl 5", "tanggal 28")
   const tglMatch = lower.match(/\b(?:tgl|tanggal)\s*(\d{1,2})\b/i);
   if (tglMatch && !dateChanged) {
     const d = parseInt(tglMatch[1], 10);
@@ -161,10 +107,9 @@ export function extractDateTimeIndo(
     }
   }
 
-  // 4. Nama Bulan Berdiri Sendiri (misal: "gaji september 4jt")
+  // 4. Standalone month name (e.g. "gaji september 4jt")
   if (!dateChanged) {
-    const monthRegex =
-      /\b(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b/i;
+    const monthRegex = /\b(januari|februari|maret|april|mei|juni|juli|agustus|september|oktober|november|desember)\b/i;
     const mMatch = lower.match(monthRegex);
     if (mMatch) {
       const mIdx = INDO_MONTHS[mMatch[1].toLowerCase()];
@@ -178,34 +123,34 @@ export function extractDateTimeIndo(
     }
   }
 
-  // 5. Bagian Waktu Relatif (tadi pagi, siang, sore, malam)
+  // 5. Time of day
   if (!timeChanged) {
     if (/\b(?:tadi\s+pagi|pagi\s+ini|pagi\s+tadi)\b/i.test(lower)) {
-      const m = lower.match(/\b(?:tadi\s+pagi|pagi\s+ini|pagi\s+tadi)\b/i)!;
+      const m = lower.match(/\b(?:tadi\s+pagi|pagi\s+ini|pagi\s+tadi)\b/i);
       dateObj.setHours(8, 0, 0, 0);
       timeLabel = dayLabel ? "Pagi" : "Tadi pagi";
       matchedTokens.push(m[0]);
       timeChanged = true;
     } else if (/\b(?:tadi\s+siang|siang\s+ini|siang\s+tadi)\b/i.test(lower)) {
-      const m = lower.match(/\b(?:tadi\s+siang|siang\s+ini|siang\s+tadi)\b/i)!;
+      const m = lower.match(/\b(?:tadi\s+siang|siang\s+ini|siang\s+tadi)\b/i);
       dateObj.setHours(12, 30, 0, 0);
       timeLabel = dayLabel ? "Siang" : "Tadi siang";
       matchedTokens.push(m[0]);
       timeChanged = true;
     } else if (/\b(?:tadi\s+sore|sore\s+ini|sore\s+tadi)\b/i.test(lower)) {
-      const m = lower.match(/\b(?:tadi\s+sore|sore\s+ini|sore\s+tadi)\b/i)!;
+      const m = lower.match(/\b(?:tadi\s+sore|sore\s+ini|sore\s+tadi)\b/i);
       dateObj.setHours(16, 30, 0, 0);
       timeLabel = dayLabel ? "Sore" : "Tadi sore";
       matchedTokens.push(m[0]);
       timeChanged = true;
     } else if (/\b(?:malam\s+ini|malam\s+tadi)\b/i.test(lower)) {
-      const m = lower.match(/\b(?:malam\s+ini|malam\s+tadi)\b/i)!;
+      const m = lower.match(/\b(?:malam\s+ini|malam\s+tadi)\b/i);
       dateObj.setHours(20, 0, 0, 0);
       timeLabel = dayLabel ? "Malam" : "Malam ini";
       matchedTokens.push(m[0]);
       timeChanged = true;
     } else if (dateChanged && /\b(pagi|siang|sore|malam)\b/i.test(lower)) {
-      const m = lower.match(/\b(pagi|siang|sore|malam)\b/i)!;
+      const m = lower.match(/\b(pagi|siang|sore|malam)\b/i);
       const w = m[1].toLowerCase();
       if (w === "pagi") dateObj.setHours(8, 0, 0, 0);
       if (w === "siang") dateObj.setHours(12, 30, 0, 0);
@@ -217,10 +162,8 @@ export function extractDateTimeIndo(
     }
   }
 
-  // 6. Jam / Pukul Eksplisit (misal: "jam 14:30", "jam 8 malam", "14:30")
-  const jamMatch = lower.match(
-    /\b(?:jam|pukul)\s*(\d{1,2})(?:[:.](\d{2}))?\s*(pagi|siang|sore|malam)?\b/i
-  );
+  // 6. Explicit time: jam / pukul / 14:30
+  const jamMatch = lower.match(/\b(?:jam|pukul)\s*(\d{1,2})(?:[:.](\d{2}))?\s*(pagi|siang|sore|malam)?\b/i);
   if (jamMatch) {
     let h = parseInt(jamMatch[1], 10);
     const min = jamMatch[2] ? parseInt(jamMatch[2], 10) : 0;
@@ -232,55 +175,31 @@ export function extractDateTimeIndo(
 
     if (h >= 0 && h <= 23 && min >= 0 && min <= 59) {
       dateObj.setHours(h, min, 0, 0);
-      const pad = (n: number) => n.toString().padStart(2, "0");
+      const pad = (n) => n.toString().padStart(2, "0");
       timeLabel = `${pad(h)}:${pad(min)}`;
       matchedTokens.push(jamMatch[0]);
       timeChanged = true;
     }
   } else {
-    const ftMatch = lower.match(
-      /(?<![rp\d.,])\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:wib)?\b(?!\s*(?:k|rb|ribu|jt|juta))/i
-    );
+    const ftMatch = lower.match(/(?<![rp\d.,])\b([01]?\d|2[0-3])[:.]([0-5]\d)\s*(?:wib)?\b(?!\s*(?:k|rb|ribu|jt|juta))/i);
     if (ftMatch && ftMatch[2].length === 2) {
       const h = parseInt(ftMatch[1], 10);
       const min = parseInt(ftMatch[2], 10);
       dateObj.setHours(h, min, 0, 0);
-      const pad = (n: number) => n.toString().padStart(2, "0");
+      const pad = (n) => n.toString().padStart(2, "0");
       timeLabel = `${pad(h)}:${pad(min)}`;
       matchedTokens.push(ftMatch[0]);
       timeChanged = true;
     }
   }
 
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  const iso = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(
-    dateObj.getDate()
-  )}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
+  const pad = (n) => n.toString().padStart(2, "0");
+  const iso = `${dateObj.getFullYear()}-${pad(dateObj.getMonth() + 1)}-${pad(dateObj.getDate())}T${pad(dateObj.getHours())}:${pad(dateObj.getMinutes())}`;
   const label = [dayLabel, timeLabel].filter(Boolean).join(" ") || null;
-
-  return {
-    iso,
-    label,
-    matchedTokens,
-    isExplicit: dateChanged || timeChanged,
-  };
+  return { iso, label, matchedTokens, isExplicit: dateChanged || timeChanged };
 }
 
-export type CategoryLike = {
-  id: string;
-  name: string;
-  type?: string;
-  [key: string]: any;
-};
-
-/**
- * Validasi dan parse input cepat dengan guardrail keamanan, pengecekan batas nominal,
- * dan umpan balik edukatif bagi pengguna.
- */
-export function validateQuickInput(
-  text: string,
-  categories: CategoryLike[] = []
-): QuickInputValidation {
+function parseAndValidate(text, categories = []) {
   if (!text || typeof text !== "string") {
     return { isValid: false, status: "empty", message: null, parsed: null };
   }
@@ -290,7 +209,7 @@ export function validateQuickInput(
     return { isValid: false, status: "empty", message: null, parsed: null };
   }
 
-  // 1. Guardrail: Batas Panjang Karakter
+  // 1. Guardrail: Max length
   if (raw.length > 200) {
     return {
       isValid: false,
@@ -300,7 +219,7 @@ export function validateQuickInput(
     };
   }
 
-  // 2. Guardrail: Deteksi Pola Injeksi XSS / SQL / Sistem
+  // 2. Guardrail: XSS & Injection attacks
   const dangerousPatterns = [
     /<(?:script|iframe|object|embed|applet|style)\b/i,
     /javascript:/i,
@@ -323,43 +242,38 @@ export function validateQuickInput(
     }
   }
 
-  // 3. Ekstraksi Waktu & Tanggal
+  // 3. Extract date and time
   const dt = extractDateTimeIndo(raw);
 
-  // Bersihkan token tanggal sementara agar tidak mengganggu pencarian nominal
+  // Remove date tokens temporarily for amount matching
   let textForAmount = raw;
   for (const token of dt.matchedTokens) {
     const escaped = token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     textForAmount = textForAmount.replace(new RegExp(`\\b${escaped}\\b`, "i"), " ");
   }
 
-  // 4. Deteksi Tipe Transaksi (Pemasukan vs Pengeluaran)
-  let type: "income" | "expense" = "expense";
-  const incomeRegex =
-    /\b(gaji|bonus|thr|cashback|transfer\s+masuk|dapat\s+uang|jual|penjualan|pemasukan)\b/i;
+  // 4. Extract Amount
+  let amount = 0;
+  let type = "expense";
+  let matchedAmountStr = "";
+
+  // Check income indicator
+  const incomeRegex = /\b(gaji|bonus|thr|cashback|transfer\s+masuk|dapat\s+uang|jual|penjualan|pemasukan)\b/i;
   if (incomeRegex.test(raw)) {
     type = "income";
   }
 
-  // 5. Ekstraksi Nominal
-  let amount = 0;
-  let matchedAmountStr = "";
-
-  // Cocokkan Jutaan (jt / juta)
-  const millionMatch = textForAmount.match(
-    /(?:rp\.?\s*)?(\d+(?:[.,]\d+)?)\s*(?:jt|juta)(?:\s*(?:jt|juta))*\b/i
-  );
+  // Match Millions (jt / juta)
+  const millionMatch = textForAmount.match(/(?:rp\.?\s*)?(\d+(?:[.,]\d+)?)\s*(?:jt|juta)\b/i);
   if (millionMatch) {
     const num = parseFloat(millionMatch[1].replace(",", "."));
     amount = Math.round(num * 1_000_000);
     matchedAmountStr = millionMatch[0];
   }
 
-  // Cocokkan Ribuan (rb / ribu / k)
+  // Match Thousands (rb / ribu / k)
   if (!amount) {
-    const thousandMatch = textForAmount.match(
-      /(?:rp\.?\s*)?(\d+(?:[.,]\d+)?)\s*(?:rb|ribu|k)(?:\s*(?:rb|ribu|k))*\b/i
-    );
+    const thousandMatch = textForAmount.match(/(?:rp\.?\s*)?(\d+(?:[.,]\d+)?)\s*(?:rb|ribu|k)\b/i);
     if (thousandMatch) {
       const num = parseFloat(thousandMatch[1].replace(",", "."));
       amount = Math.round(num * 1_000);
@@ -367,11 +281,9 @@ export function validateQuickInput(
     }
   }
 
-  // Cocokkan format angka standar: Rp 25.000 atau 50.000 atau plain 25000
+  // Match standard formatted numbers: Rp 25.000 or 50.000 or plain 25000
   if (!amount) {
-    const plainMatch = textForAmount.match(
-      /(?:rp\.?\s*)?(\d{1,3}(?:[.]\d{3})+|\d+)(?![\d:])/i
-    );
+    const plainMatch = textForAmount.match(/(?:rp\.?\s*)?(\d{1,3}(?:[.]\d{3})+|\d+)(?![\d:])/i);
     if (plainMatch) {
       const cleaned = plainMatch[1].replace(/\./g, "");
       const num = parseInt(cleaned, 10);
@@ -382,7 +294,7 @@ export function validateQuickInput(
     }
   }
 
-  // 6. Guardrail: Nominal Tidak Ditemukan (Missing Amount)
+  // 5. Guardrail: Missing Amount
   if (!amount || isNaN(amount) || amount <= 0) {
     const isGreeting = /\b(halo|hai|p|tes|test|assalamualaikum)\b/i.test(raw);
     const helperMsg = isGreeting
@@ -396,7 +308,7 @@ export function validateQuickInput(
     };
   }
 
-  // 7. Guardrail: Batas Nominal Maksimal (Rp 1.000.000.000)
+  // 6. Guardrail: Amount limit (Max 1 Miliar Rp)
   if (amount > 1_000_000_000) {
     return {
       isValid: false,
@@ -406,7 +318,7 @@ export function validateQuickInput(
     };
   }
 
-  // 8. Bersihkan Deskripsi: Hapus token nominal dan token tanggal/waktu
+  // 7. Clean description: remove amount and date tokens
   let desc = raw;
   if (matchedAmountStr) {
     const escapedAmount = matchedAmountStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -426,84 +338,6 @@ export function validateQuickInput(
     desc = desc.charAt(0).toUpperCase() + desc.slice(1);
   }
 
-  // 9. Pencocokan Kategori Otomatis berdasarkan Kata Kunci
-  const keywordsMap: Record<string, string[]> = {
-    "Makan & Minum": [
-      "kopi", "coffee", "susu", "nasi", "ayam", "soto", "bakso", "mie", "ramen",
-      "burger", "pizza", "cafe", "resto", "warung", "padang", "gultik", "roti",
-      "toast", "jus", "teh", "es", "boba", "sarapan", "lunch", "makan", "dinner",
-      "snack", "jajan", "martabak", "mcd", "kfc", "dunkin", "geprek", "seblak",
-    ],
-    "Kesehatan": [
-      "obat", "dokter", "apotek", "vitamin", "panadol", "tolak angin", "bodrex",
-      "paracetamol", "lab", "periksa", "dokter gigi", "klinik", "betadine",
-      "minyak kayu putih", "masker", "rapid",
-    ],
-    "Transportasi": [
-      "bensin", "pertalite", "pertamax", "spbu", "ojol", "gojek", "goride", "gocar",
-      "grab", "parkir", "tol", "kereta", "krl", "mrt", "tj", "transjakarta",
-      "tambal", "helm", "cuci motor", "cuci mobil", "bbm", "angkot",
-    ],
-    "Belanja Bulanan": [
-      "supermarket", "indomaret", "alfamart", "alfamidi", "sabun", "shampoo",
-      "deterjen", "minyak", "beras", "telur", "belanja dapur", "pasar", "sayur",
-      "buah", "kebutuhan", "galon", "aqua", "odol", "tisu",
-    ],
-    "Tagihan & Utilitas": [
-      "listrik", "pln", "token", "air", "pdam", "wifi", "indihome", "firstmedia",
-      "kuota", "telkomsel", "xl", "indosat", "pulsa", "bpjs", "netflix", "spotify",
-      "iuran", "pbb",
-    ],
-    "Hiburan & Liburan": [
-      "nonton", "bioskop", "xxi", "cgv", "tiket", "game", "steam", "liburan",
-      "hotel", "villa", "staycation", "piknik", "karaoke", "dufan",
-    ],
-    "Gaji & Pendapatan": [
-      "gaji", "payroll", "bonus", "komisi", "cashback", "dividen", "penjualan", "thr",
-    ],
-  };
-
-  const lowerDesc = desc.toLowerCase();
-  let matchedCatName: string | null = null;
-
-  for (const [catName, keywords] of Object.entries(keywordsMap)) {
-    for (const kw of keywords) {
-      if (kw.length <= 3) {
-        const wordRegex = new RegExp(`\\b${kw}\\b`, "i");
-        if (wordRegex.test(lowerDesc)) {
-          matchedCatName = catName;
-          break;
-        }
-      } else {
-        if (lowerDesc.includes(kw)) {
-          matchedCatName = catName;
-          break;
-        }
-      }
-    }
-    if (matchedCatName) break;
-  }
-
-  let suggestedCategoryId = "";
-  if (categories && categories.length > 0) {
-    if (matchedCatName) {
-      const found = categories.find(
-        (c) =>
-          c.name.toLowerCase().includes(matchedCatName!.toLowerCase()) ||
-          matchedCatName!.toLowerCase().includes(c.name.toLowerCase())
-      );
-      if (found) suggestedCategoryId = found.id;
-    }
-    if (!suggestedCategoryId) {
-      const defaultCat = categories.find((c) => c.type === type);
-      if (defaultCat) {
-        suggestedCategoryId = defaultCat.id;
-      } else if (categories[0]) {
-        suggestedCategoryId = categories[0].id;
-      }
-    }
-  }
-
   return {
     isValid: true,
     status: "valid",
@@ -512,22 +346,32 @@ export function validateQuickInput(
       amount,
       type,
       description: desc,
-      matchedCategoryName: matchedCatName,
-      suggestedCategoryId,
       transactionDate: dt.iso,
       matchedDateLabel: dt.label,
     },
   };
 }
 
-/**
- * Helper kompatibel untuk mengekstrak data belanja cepat.
- * Mengembalikan ParsedQuickExpense jika valid, atau null jika tidak valid/ada guardrail yang memblokir.
- */
-export function parseQuickInput(
-  text: string,
-  categories: CategoryLike[] = []
-): ParsedQuickExpense | null {
-  return validateQuickInput(text, categories).parsed;
-}
+const testInputs = [
+  "bensin 25rb kemarin",
+  "kopi 35k tadi siang",
+  "tiket bioskop 100k jam 19:30 kemarin",
+  "gaji september 4jt",
+  "kopi",
+  "halo apa kabar",
+  "<script>alert(1)</script>",
+  "DROP TABLE transactions; --",
+  "beli pulau 2jt juta",
+  "beli pulau 2000000000",
+];
 
+for (const input of testInputs) {
+  const res = parseAndValidate(input);
+  console.log(`Input: "${input}"`);
+  console.log(`  Status: ${res.status}`);
+  if (res.message) console.log(`  Message: ${res.message}`);
+  if (res.parsed) {
+    console.log(`  Parsed: Amount ${res.parsed.amount} | Desc: "${res.parsed.description}" | Date: ${res.parsed.transactionDate} (${res.parsed.matchedDateLabel})`);
+  }
+  console.log("---");
+}

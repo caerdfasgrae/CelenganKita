@@ -3,7 +3,11 @@
 import { useState, useTransition, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Category } from "@/types/database";
-import { parseQuickInput, ParsedQuickExpense } from "@/lib/quick-parser";
+import {
+  validateQuickInput,
+  QuickInputValidation,
+  ParsedQuickExpense,
+} from "@/lib/quick-parser";
 import { createManualTransaction } from "@/app/transactions/actions";
 import { formatRupiah, getWIBDateTimeLocal } from "@/lib/utils";
 import Link from "next/link";
@@ -17,6 +21,8 @@ import {
   ArrowUpRight,
   CheckCircle2,
   Camera,
+  Calendar,
+  AlertCircle,
 } from "lucide-react";
 
 interface QuickExpenseBarProps {
@@ -37,11 +43,14 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
   const [draftDescription, setDraftDescription] = useState<string>("");
   const [draftType, setDraftType] = useState<"income" | "expense">("expense");
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [draftDate, setDraftDate] = useState<string>("");
 
-  // Live parsing preview for instant feedback as user types
-  const liveParsed = useMemo<ParsedQuickExpense | null>(() => {
-    return parseQuickInput(inputText, categories);
+  // Live parsing and guardrail validation for instant feedback as user types
+  const liveValidation = useMemo<QuickInputValidation>(() => {
+    return validateQuickInput(inputText, categories);
   }, [inputText, categories]);
+
+  const liveParsed = liveValidation.parsed;
 
   // Handle ESC key to close bottom sheet
   useEffect(() => {
@@ -68,6 +77,7 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
     setDraftDescription(liveParsed.description);
     setDraftType(liveParsed.type);
     setSelectedCategoryId(liveParsed.suggestedCategoryId);
+    setDraftDate(liveParsed.transactionDate || getWIBDateTimeLocal());
     setErrorMessage(null);
     setIsSheetOpen(true);
   }
@@ -88,7 +98,7 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
     formData.append("type", draftType);
     formData.append("amount", draftAmount.toString());
     formData.append("description", draftDescription.trim() || "Catatan cepat");
-    formData.append("transactionDate", getWIBDateTimeLocal());
+    formData.append("transactionDate", draftDate || getWIBDateTimeLocal());
     formData.append("source", "manual");
 
     startTransition(async () => {
@@ -200,13 +210,40 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
           </button>
         </form>
 
+        {/* Live Helper & Guardrail Warning Feedback */}
+        {inputText.trim().length > 0 && !liveParsed && (
+          <div className="mt-2 text-xs flex items-center gap-1.5 animate-in fade-in duration-150">
+            {liveValidation.status === "security_blocked" ||
+            liveValidation.status === "amount_exceeded" ? (
+              <div
+                role="alert"
+                className="flex items-center gap-1.5 text-rose-600 font-bold text-[11px]"
+              >
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                <span>{liveValidation.message}</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-stone-500 font-medium text-[11px]">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" aria-hidden="true" />
+                <span>{liveValidation.message}</span>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Live Detected Preview Pill */}
         {liveParsed && (
           <div className="mt-2.5 flex items-center justify-between pt-2 border-t border-warm-border/60">
-            <div className="flex items-center gap-1.5 min-w-0">
+            <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
               <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 shrink-0">
                 {liveParsed.type === "income" ? "+ Masuk" : "- Belanja"}
               </span>
+              {liveParsed.matchedDateLabel && (
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-stone-100 text-stone-700 border border-stone-200 shrink-0 flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-stone-500" aria-hidden="true" />
+                  {liveParsed.matchedDateLabel}
+                </span>
+              )}
               <span className="text-xs font-black text-warm-espresso truncate">
                 {formatRupiah(liveParsed.amount)}
               </span>
@@ -218,7 +255,7 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
             <button
               type="button"
               onClick={() => handleOpenSheet()}
-              className="text-[11px] font-bold text-orange-600 hover:text-orange-700 underline shrink-0 min-h-[32px] px-1 flex items-center"
+              className="text-[11px] font-bold text-orange-600 hover:text-orange-700 underline shrink-0 min-h-[44px] px-2 flex items-center"
             >
               Simpan →
             </button>
@@ -332,6 +369,31 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
                 type="text"
                 value={draftDescription}
                 onChange={(e) => setDraftDescription(e.target.value)}
+                className="w-full min-h-[44px] px-3 text-xs sm:text-sm font-medium bg-white border border-warm-border rounded-xl text-warm-espresso focus:outline-none focus:border-warm-apricot focus:ring-1 focus:ring-warm-apricot"
+              />
+            </div>
+
+            {/* Date & Time Picker */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label
+                  htmlFor="quick-date-input"
+                  className="text-xs font-bold text-stone-700 flex items-center gap-1.5"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-stone-500" aria-hidden="true" />
+                  Tanggal & Waktu Transaksi
+                </label>
+                {liveParsed?.matchedDateLabel && (
+                  <span className="text-[10px] text-orange-700 font-extrabold bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                    ✨ {liveParsed.matchedDateLabel}
+                  </span>
+                )}
+              </div>
+              <input
+                id="quick-date-input"
+                type="datetime-local"
+                value={draftDate}
+                onChange={(e) => setDraftDate(e.target.value)}
                 className="w-full min-h-[44px] px-3 text-xs sm:text-sm font-medium bg-white border border-warm-border rounded-xl text-warm-espresso focus:outline-none focus:border-warm-apricot focus:ring-1 focus:ring-warm-apricot"
               />
             </div>

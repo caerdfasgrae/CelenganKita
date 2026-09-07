@@ -11,21 +11,25 @@ Tersedia sebagai **Progressive Web App (PWA)** dan **Aplikasi Android Native APK
 1. **Ruang Celengan Khusus Berdua (Couple Space)**:
    - Terhubung bersama pasangan menggunakan **Kode Sambung 8 Karakter**.
    - Keamanan tingkat basis data via *PostgreSQL Row-Level Security (RLS)*: data belanjaan kalian berdua 100% terisolasi dan privat.
-2. **Fitur "Catat Cepat" Satu Baris (Natural Language Input)**:
-   - Cukup ketik kalimat santai seperti `Kopi susu 25rb` atau `Bensin 50k` di Dasbor.
-   - Sistem mem-parsing nominal, deskripsi, dan mencocokkan kategori secara instan (0ms) di memori HP tanpa biaya komputasi API.
-   - Dilengkapi lembar konfirmasi ramah jempol (*1-tap bottom sheet*).
-3. **Visualisasi Kategori Pengeluaran Bersama (Spending Breakdown)**:
+2. **Fitur "Catat Cepat" Satu Baris (Natural Language Input + Ekstraksi Waktu)**:
+   - Cukup ketik kalimat santai seperti `Kopi susu 25rb kemarin` atau `Bensin 50k tadi siang` di Dasbor.
+   - Sistem mem-parsing nominal, deskripsi, tanggal/jam transaksi, dan mencocokkan kategori secara instan (0ms) di memori perangkat.
+   - Dilengkapi guardrail keamanan cerdas (anti-injeksi XSS/SQL, batas nominal wajar) dan lembar konfirmasi ramah jempol (*1-tap bottom sheet*) dengan pemilih tanggal interaktif.
+3. **Integrasi Bot WhatsApp Hermes & Webhook Multi-Gateway**:
+   - Mendukung pencatatan transaksi langsung dari WhatsApp (Hermes Bot, Fonnte, Wablas, Meta Cloud API).
+   - Pengguna cukup mengirim chat kasual atau forward bukti transaksi ke nomor WhatsApp bot.
+   - Data langsung otomatis masuk ke antrean *Tinjau Belanja* di dasbor (*Human-in-the-Loop*) lengkap dengan nominal, kategori saran, dan tanggal transaksi yang terdeteksi.
+4. **Visualisasi Kategori Pengeluaran Bersama (Spending Breakdown)**:
    - Grafik proporsi pengeluaran bulanan berdua yang rapi dan elegan.
    - Menampilkan persentase dan nominal belanja tiap kategori (*Makan & Minum, Transportasi, Belanja Bulanan, dll.*) agar transparansi keuangan terjaga tanpa saling curiga.
-4. **Foto Nota & Struk Belanja (Client-Side OCR)**:
+5. **Foto Nota & Struk Belanja (Client-Side OCR)**:
    - Pemindaian struk fisik 100% diproses di browser HP menggunakan Tesseract.js & *Spatial-Keyword Anchoring Heuristics*.
    - 0 detik beban komputasi server, menghemat kuota cloud dan menjamin privasi foto struk.
-5. **Sinkronisasi Notifikasi HP Otomatis**:
+6. **Sinkronisasi Notifikasi HP Otomatis**:
    - Mendukung penangkapan notifikasi belanja dari **BCA Mobile, GoPay, ShopeePay, BRI (BRImo), BNI, dan SeaBank**.
    - Setiap transaksi otomatis masuk ke antrean *Tinjau Belanja* di dasbor (*Human-in-the-Loop*) sebelum resmi dibukukan ke saldo kas bersama.
-6. **Ergonomi Layar Fisik & Tampilan Native**:
-   - Tampilan penuh *full bleed edge-to-edge* tanpa sekat samping.
+7. **Ergonomi Layar Fisik & Tampilan Responsif**:
+   - Tampilan adaptif penuh (*mobile edge-to-edge* dan layout luas di desktop).
    - Penyesuaian safe area Android (*status bar, punch-hole camera, gesture navigation bar*).
    - Target sentuhan tombol nyaman ($\ge 44 \times 44\text{px}$) dengan umpan balik taktil.
 
