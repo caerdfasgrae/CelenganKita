@@ -50,13 +50,37 @@ jobs:
 
       - name: Report Failure to Commit Comment
         if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
-          LOG_CONTENT=$(tail -n 45 gradle.log | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
-          curl -s -X POST \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments \
-            -d "{\"body\":\"### ❌ Android Build Error Log\n\`\`\`text\n${LOG_CONTENT}\n\`\`\`\"}" || true
+          python3 - << 'EOF'
+          import json, os, urllib.request
+          token = os.environ.get('GITHUB_TOKEN')
+          repo = os.environ.get('GITHUB_REPOSITORY')
+          sha = os.environ.get('GITHUB_SHA')
+          try:
+              with open('gradle.log', 'r', errors='ignore') as f:
+                  log_text = f.read()
+              lines = log_text.strip().split('\n')
+              tail_lines = '\n'.join(lines[-60:])
+              data = json.dumps({"body": f"### ❌ Android Build Error Log\n```text\n{tail_lines}\n```"}).encode('utf-8')
+              req = urllib.request.Request(
+                  f"https://api.github.com/repos/{repo}/commits/{sha}/comments",
+                  data=data,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "User-Agent": "GitHub-Action",
+                      "Content-Type": "application/json"
+                  }
+              )
+              urllib.request.urlopen(req)
+              print("Successfully posted error comment to commit!")
+          except Exception as e:
+              print(f"Failed to post comment: {e}")
+          EOF
 
       - name: Upload Build Log Artifact
         if: always()
