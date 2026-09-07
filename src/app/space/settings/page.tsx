@@ -6,6 +6,7 @@ import SettingsView from "./settings-view";
 import { ChevronLeft } from "lucide-react";
 import { Space, SpaceMember, Category } from "@/types/database";
 import { MobileHeader } from "@/components/ui/mobile-header";
+import { DesktopHeader } from "@/components/ui/desktop-header";
 
 export default async function SpaceSettingsPage() {
   const supabase = await createClient();
@@ -18,10 +19,10 @@ export default async function SpaceSettingsPage() {
     redirect("/login");
   }
 
-  // Ambil Space aktif
+  // Ambil Space yang diikuti user
   const { data: memberRecord } = await supabase
     .from("space_members")
-    .select("space_id, spaces(*)")
+    .select("space_id, role, nickname, spaces(*)")
     .eq("user_id", user.id)
     .order("joined_at", { ascending: false })
     .limit(1)
@@ -33,7 +34,7 @@ export default async function SpaceSettingsPage() {
 
   const space = memberRecord.spaces as any;
 
-  // Ambil semua anggota
+  // Ambil semua anggota di Space ini
   const { data: members } = await supabase
     .from("space_members")
     .select("*, profiles(*)")
@@ -50,14 +51,18 @@ export default async function SpaceSettingsPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
+      {/* Desktop Top Header Navigation */}
+      <DesktopHeader spaceName={space.name} isPartnerConnected={Boolean(members && members.length >= 2)} />
+
       {/* Mobile Ergonomic App Bar */}
       <MobileHeader
+        hideOnDesktop={true}
         title="Pengaturan"
         subtitle="Kelola Pasangan & Kategori Belanja"
         backHref="/dashboard"
       />
 
-      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 flex-1 pb-28 md:pb-12">
 
         <SettingsView
           space={space as Space}

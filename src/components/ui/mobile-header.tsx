@@ -10,6 +10,7 @@ export interface MobileHeaderProps {
   rightAction?: React.ReactNode;
   className?: string;
   sticky?: boolean;
+  hideOnDesktop?: boolean;
 }
 
 /**
@@ -26,10 +27,13 @@ export function MobileHeader({
   rightAction,
   className = "",
   sticky = true,
+  hideOnDesktop = false,
 }: MobileHeaderProps) {
   return (
     <header
-      className={`w-full pt-safe px-4 pb-3 bg-warm-canvas/95 backdrop-blur-md border-b border-warm-border/50 z-30 select-none ${
+      className={`${
+        hideOnDesktop ? "md:hidden" : ""
+      } w-full pt-safe px-4 pb-3 bg-warm-canvas/95 backdrop-blur-md border-b border-warm-border/50 z-30 select-none ${
         sticky ? "sticky top-0 left-0 right-0" : "relative"
       } ${className}`}
     >

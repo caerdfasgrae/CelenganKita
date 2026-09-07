@@ -6,6 +6,7 @@ import TransactionHistoryView from "./transaction-history-view";
 import { ChevronLeft, Plus } from "lucide-react";
 import { Category, Transaction } from "@/types/database";
 import { MobileHeader } from "@/components/ui/mobile-header";
+import { DesktopHeader } from "@/components/ui/desktop-header";
 
 export default async function TransactionsPage() {
   const supabase = await createClient();
@@ -18,10 +19,10 @@ export default async function TransactionsPage() {
     redirect("/login");
   }
 
-  // Ambil Space aktif
+  // Ambil Space ID yang aktif
   const { data: memberRecord } = await supabase
     .from("space_members")
-    .select("space_id")
+    .select("space_id, spaces(name)")
     .eq("user_id", user.id)
     .order("joined_at", { ascending: false })
     .limit(1)
@@ -32,15 +33,16 @@ export default async function TransactionsPage() {
   }
 
   const spaceId = memberRecord.space_id;
+  const spaceName = (memberRecord.spaces as any)?.name || "Celengan Bersama";
 
-  // Ambil semua transaksi di space ini
+  // Ambil transaksi di space ini
   const { data: transactions } = await supabase
     .from("transactions")
-    .select("*, category:categories(*)")
+    .select("*, categories(*), profiles(full_name)")
     .eq("space_id", spaceId)
     .order("transaction_date", { ascending: false });
 
-  // Ambil kategori
+  // Ambil daftar kategori
   const { data: categories } = await supabase
     .from("categories")
     .select("*")
@@ -49,8 +51,12 @@ export default async function TransactionsPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
+      {/* Desktop Top Header Navigation */}
+      <DesktopHeader spaceName={spaceName} />
+
       {/* Mobile Ergonomic App Bar */}
       <MobileHeader
+        hideOnDesktop={true}
         title="Riwayat Belanja"
         subtitle="Catatan Kas Berdua"
         backHref="/dashboard"
@@ -66,7 +72,7 @@ export default async function TransactionsPage() {
         }
       />
 
-      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 flex-1 pb-28 md:pb-12">
 
         <TransactionHistoryView
           transactions={(transactions || []) as Transaction[]}

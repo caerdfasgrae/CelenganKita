@@ -33,12 +33,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="min-h-screen bg-warm-canvas sm:bg-[#F7F4EE] text-warm-espresso antialiased flex flex-col items-center">
+      <body className="min-h-screen bg-warm-canvas text-warm-espresso antialiased flex flex-col">
         <PWARegister />
         <WarmupClient />
-        {/* Container Mobile: Full Bleed Edge-to-Edge on Mobile, Centered on Desktop */}
-        <div className="w-full max-w-full sm:max-w-md min-h-screen bg-warm-canvas text-warm-espresso sm:shadow-xl flex flex-col relative sm:border-x sm:border-warm-border">
-          <main role="main" className="flex-1 flex flex-col">
+        <div className="w-full min-h-screen flex flex-col">
+          <main role="main" className="flex-1 flex flex-col w-full">
             {children}
           </main>
         </div>

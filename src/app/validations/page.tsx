@@ -7,6 +7,7 @@ import { BellRing, CheckCircle2, ChevronLeft, Sparkles, Smartphone } from "lucid
 import { Category, PendingValidation } from "@/types/database";
 import { PenguinMascot } from "@/components/ui/penguin-mascot";
 import { MobileHeader } from "@/components/ui/mobile-header";
+import { DesktopHeader } from "@/components/ui/desktop-header";
 
 export default async function ValidationsPage() {
   const supabase = await createClient();
@@ -22,7 +23,7 @@ export default async function ValidationsPage() {
   // Ambil Space aktif
   const { data: memberRecord } = await supabase
     .from("space_members")
-    .select("space_id")
+    .select("space_id, spaces(name)")
     .eq("user_id", user.id)
     .order("joined_at", { ascending: false })
     .limit(1)
@@ -33,6 +34,7 @@ export default async function ValidationsPage() {
   }
 
   const spaceId = memberRecord.space_id;
+  const spaceName = (memberRecord.spaces as any)?.name || "Celengan Bersama";
 
   // Ambil data antrean validasi yang masih 'pending'
   const { data: pendingItems } = await supabase
@@ -51,14 +53,18 @@ export default async function ValidationsPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
+      {/* Desktop Top Header Navigation */}
+      <DesktopHeader spaceName={spaceName} pendingCount={pendingItems?.length || 0} />
+
       {/* Mobile Ergonomic App Bar */}
       <MobileHeader
+        hideOnDesktop={true}
         title="Tinjau Belanja"
         subtitle="Notifikasi HP & Dompet Digital"
         backHref="/dashboard"
       />
 
-      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
+      <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 flex-1 pb-28 md:pb-12">
 
         {/* Info Banner */}
         <div className="p-3.5 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-stone-800 text-xs flex items-start gap-2.5 shadow-2xs">

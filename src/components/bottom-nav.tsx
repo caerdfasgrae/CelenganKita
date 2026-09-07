@@ -43,8 +43,8 @@ export default function BottomNav({ pendingCount = 0 }: BottomNavProps) {
 
   return (
     <nav
-      aria-label="Navigasi Utama"
-      className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-warm-border px-3 py-1 safe-bottom z-40 select-none shadow-sm"
+      aria-label="Navigasi Utama Mobile"
+      className="md:hidden sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-warm-border px-3 py-1 safe-bottom z-40 select-none shadow-sm"
     >
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
