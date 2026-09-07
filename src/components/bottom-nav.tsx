@@ -59,12 +59,24 @@ export default function BottomNav({ pendingCount = 0 }: BottomNavProps) {
                 prefetch={true}
                 aria-current={isActive ? "page" : undefined}
                 aria-label="Catat Belanja Baru"
-                className="flex flex-col items-center -mt-4 group min-w-[56px] min-h-[56px] justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot rounded-xl active:scale-95 transition-transform duration-75"
+                className="flex flex-col items-center -mt-3.5 group min-w-[56px] min-h-[56px] justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot rounded-xl active:scale-95 transition-transform duration-75"
               >
-                <div className="w-11 h-11 rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-bold flex items-center justify-center shadow-md shadow-orange-950/10 group-active:scale-95 transition duration-100 border border-orange-300">
+                <div
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-100 ${
+                    isActive
+                      ? "bg-warm-apricot text-stone-950 font-black shadow-md shadow-orange-950/20 border border-orange-400 scale-105"
+                      : "bg-[#FFF9EE] text-stone-700 border border-amber-200/90 shadow-2xs hover:bg-[#FFECC2]"
+                  }`}
+                >
                   <Icon className="w-5 h-5" aria-hidden="true" />
                 </div>
-                <span className="text-[10px] font-bold text-stone-800 mt-1">
+                <span
+                  className={`text-[10px] mt-1 tracking-tight ${
+                    isActive
+                      ? "text-orange-600 font-extrabold"
+                      : "text-stone-500 font-medium"
+                  }`}
+                >
                   {item.label}
                 </span>
               </Link>

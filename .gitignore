@@ -50,3 +50,12 @@ next-env.d.ts
 # tesseract language models
 *.traineddata
 
+# test and personal media
+test_foto/
+*.jpg
+*.jpeg
+*.png
+!public/icons/*
+!public/images/*
+!android/app/src/main/res/**/*
+

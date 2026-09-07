@@ -1,160 +1,114 @@
-# CelenganKita 🐷❤️
+# CelenganKita 🐧💕🐧
 
-**CelenganKita** adalah aplikasi manajemen anggaran bersama (*shared budgeting*) yang dirancang khusus untuk pasangan cerdas di Indonesia. Dibangun berbasis Progressive Web App (PWA) yang dapat di-install langsung di layar utama smartphone tanpa biaya store listing, dengan arsitektur cloud hemat biaya (**Target Rp0 / Free Tier**).
+**CelenganKita** adalah aplikasi manajemen anggaran dan pencatatan kas bersama (*shared couple budgeting*) yang dirancang khusus untuk pasangan di Indonesia. Didesain dengan estetika hangat (*Warm Cozy Couples Sanctuary*), berorientasi *mobile-first edge-to-edge*, bebas dari "AI slop", serta memiliki arsitektur berbiaya **Rp0 (Free Tier)** dengan waktu respon instan.
 
----
-
-## 🚀 Fitur Unggulan
-
-1. **Ruang Dompet Bersama (Couple Space)**:
-   - Pasangan terhubung dalam satu *Space* menggunakan **Kode Undangan 8 Karakter**.
-   - Row-Level Security (RLS) di level PostgreSQL memastikan data hanya bisa diakses oleh Anda dan pasangan tercinta.
-2. **Sinkronisasi Otomatis Notifikasi HP (Fitur 1)**:
-   - Integrasi gratis dengan aplikasi otomatisasi Android (MacroDroid / Tasker).
-   - Menangkap notifikasi push dari **BCA Mobile, GoPay, ShopeePay, BRI (BRImo), BNI, dan SeaBank**.
-   - Masuk ke antrean *"Perlu Validasi"* di dasbor sebelum tercatat secara resmi (human-in-the-loop).
-3. **Scan Struk Belanja & Bukti Transfer OCR (Fitur 2)**:
-   - Pemrosesan gambar 100% di browser pengguna (*client-side*) menggunakan **Tesseract.js** & Canvas Binarization.
-   - **0 detik pemakaian vCPU di Google Cloud Run**, menghemat kuota server dan bandwidth.
-   - Mendukung **Foto Langsung dari Kamera** maupun **Pilih Screenshot dari Galeri HP**.
-4. **PWA Offline & Mobile-First**:
-   - Web App Manifest & Service Worker untuk pengalaman fullscreen menyerupai aplikasi native Android/iOS.
+Tersedia sebagai **Progressive Web App (PWA)** dan **Aplikasi Android Native APK** (berbasis Capacitor dengan *Bank Notification Listener Service*).
 
 ---
 
-## 🛠️ Tech Stack & Strategi Biaya Rp0
+## 🌟 Fitur Unggulan
 
-| Komponen | Pilihan Teknologi | Keunggulan & Efisiensi |
+1. **Ruang Celengan Khusus Berdua (Couple Space)**:
+   - Terhubung bersama pasangan menggunakan **Kode Sambung 8 Karakter**.
+   - Keamanan tingkat basis data via *PostgreSQL Row-Level Security (RLS)*: data belanjaan kalian berdua 100% terisolasi dan privat.
+2. **Fitur "Catat Cepat" Satu Baris (Natural Language Input)**:
+   - Cukup ketik kalimat santai seperti `Kopi susu 25rb` atau `Bensin 50k` di Dasbor.
+   - Sistem mem-parsing nominal, deskripsi, dan mencocokkan kategori secara instan (0ms) di memori HP tanpa biaya komputasi API.
+   - Dilengkapi lembar konfirmasi ramah jempol (*1-tap bottom sheet*).
+3. **Visualisasi Kategori Pengeluaran Bersama (Spending Breakdown)**:
+   - Grafik proporsi pengeluaran bulanan berdua yang rapi dan elegan.
+   - Menampilkan persentase dan nominal belanja tiap kategori (*Makan & Minum, Transportasi, Belanja Bulanan, dll.*) agar transparansi keuangan terjaga tanpa saling curiga.
+4. **Foto Nota & Struk Belanja (Client-Side OCR)**:
+   - Pemindaian struk fisik 100% diproses di browser HP menggunakan Tesseract.js & *Spatial-Keyword Anchoring Heuristics*.
+   - 0 detik beban komputasi server, menghemat kuota cloud dan menjamin privasi foto struk.
+5. **Sinkronisasi Notifikasi HP Otomatis**:
+   - Mendukung penangkapan notifikasi belanja dari **BCA Mobile, GoPay, ShopeePay, BRI (BRImo), BNI, dan SeaBank**.
+   - Setiap transaksi otomatis masuk ke antrean *Tinjau Belanja* di dasbor (*Human-in-the-Loop*) sebelum resmi dibukukan ke saldo kas bersama.
+6. **Ergonomi Layar Fisik & Tampilan Native**:
+   - Tampilan penuh *full bleed edge-to-edge* tanpa sekat samping.
+   - Penyesuaian safe area Android (*status bar, punch-hole camera, gesture navigation bar*).
+   - Target sentuhan tombol nyaman ($\ge 44 \times 44\text{px}$) dengan umpan balik taktil.
+
+---
+
+## 🛠️ Arsitektur & Strategi Biaya Rp0
+
+| Komponen | Pilihan Teknologi | Wilayah / Keunggulan |
 | :--- | :--- | :--- |
-| **Framework** | Next.js 15 (App Router, Standalone) | Server Components cepat & Route Handlers untuk Webhook API |
-| **Styling & UI** | Tailwind CSS + Lucide Icons | Desain responsif mobile-first, ramah sentuhan, zero-runtime CSS |
-| **Database** | Supabase (PostgreSQL 500MB Free Tier) | Row-Level Security (RLS) native tanpa beban ORM binary |
-| **Client Lib** | `@supabase/ssr` + Generated Types | Memori hemat 50–100MB RAM dibanding Prisma, cold-start cepat |
-| **OCR Engine** | Tesseract.js di Web Worker | 0 biaya server komputasi |
-| **Komputasi** | Google Cloud Run (Region `us-central1`) | Always Free Tier (2 juta req/bln, 360k GB-sec, 180k vCPU-sec) |
-| **Edge CDN** | Cloudflare Free Plan | Memangkas latensi US-ID dari ~250ms ke <25ms via caching edge Jakarta |
-| **Email Service** | Resend (Free Tier 3.000 email/bulan) | Custom SMTP untuk email transaksional bermerek CelenganKita |
+| **Frontend & API** | Next.js 15 (App Router) di Vercel | Region Singapura (`sin1`) intra-datacenter proximity |
+| **Basis Data** | Supabase (PostgreSQL 500MB Free Tier) | Region Singapura (`ap-southeast-1`), native RLS |
+| **Mobile App** | Capacitor Android Native APK & PWA | Edge-to-edge WebView + Native Notification Service |
+| **OCR Komputasi** | Tesseract.js di Web Worker Client | Rp0 biaya server, 100% di browser |
+| **Identitas Visual** | Warm Cozy Couple Palette | `#FFFDF8` Canvas, `#FFA259` Apricot, `#FF7E7E` Coral |
 
 ---
 
-## 📂 Struktur Proyek
+## 📂 Struktur Repositori
 
-```
+```text
 CelenganKita/
-├── public/
-│   ├── icons/            # Icon PWA (SVG, 192x192, 512x512)
-│   ├── manifest.json     # PWA Manifest
-│   └── sw.js             # Service Worker Cache
-├── scripts/
-│   ├── create-png-icons.mjs  # Generator Icon PNG PWA
-│   └── test-parser.mjs       # Unit Test Regex Notifikasi Bank
+├── android/              # Proyek Native Android (Capacitor + Bank Notification Service)
+├── public/               # Aset Statis & Maskot (Pingu & Penga)
 ├── src/
 │   ├── app/
-│   │   ├── api/v1/webhook/notify/route.ts  # Webhook Ingestion API
-│   │   ├── auth/actions.ts                 # Server Actions Auth
-│   │   ├── dashboard/page.tsx              # Dasbor Utama Saldo Bersama
-│   │   ├── login/page.tsx                  # Halaman Masuk
-│   │   ├── register/page.tsx               # Halaman Daftar
-│   │   ├── space/
-│   │   │   ├── actions.ts                  # Server Actions Space & Invite
-│   │   │   ├── setup/page.tsx              # Onboarding Buat / Gabung Space
-│   │   │   └── settings/page.tsx           # Setup Webhook MacroDroid & Invite Code
-│   │   ├── transactions/
-│   │   │   ├── actions.ts                  # Server Actions Transaksi
-│   │   │   ├── new/page.tsx                # Form Transaksi & OCR Scanner
-│   │   │   └── page.tsx                    # Riwayat Transaksi & Filter
-│   │   ├── validations/
-│   │   │   ├── actions.ts                  # Server Actions Validasi
-│   │   │   └── page.tsx                    # Antrean Validasi Notifikasi HP
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   └── page.tsx                        # Landing Page
-│   ├── components/
-│   │   ├── bottom-nav.tsx                  # Navigasi Bawah Mobile
-│   │   ├── ocr-scanner.tsx                 # Client-side OCR Tesseract Scanner
-│   │   └── pwa-register.tsx                # Service Worker Registrasi
-│   ├── lib/
-│   │   ├── parser/bank-notification.ts     # Regex Parser 6 Bank & E-Wallet
-│   │   ├── supabase/                       # Supabase Client (Browser, Server, Admin)
-│   │   └── utils.ts                        # Currency Format (IDR), Date, SHA256
-│   ├── types/database.ts                   # TypeScript Interfaces Database
-│   └── middleware.ts                       # Next.js Session Middleware
-├── supabase/
-│   └── schema.sql        # Skema DDL Database + RLS Policies Lengkap
-├── Dockerfile            # Multi-stage Dockerfile untuk Cloud Run
-└── package.json
+│   │   ├── api/v1/       # Endpoint Ping Warmup & Webhook Ingestion
+│   │   ├── dashboard/    # Dasbor Saldo, Catat Cepat & Grafik Kategori
+│   │   ├── space/        # Pengaturan Celengan, Pasangan & Kategori Kustom
+│   │   ├── transactions/ # Riwayat Belanja, Filter & Form Input Lengkap
+│   │   └── validations/  # Antrean Tinjau Belanja Notifikasi HP
+│   ├── components/       # Komponen UI Ergonomis, Bottom Sheet & Navigasi
+│   ├── lib/              # Parser Cerdas, OCR Heuristics & Supabase Clients
+│   └── types/            # Definisi Tipe Data PostgreSQL
+├── supabase/             # Skema Migrasi DDL & Kebijakan Keamanan RLS
+└── docs/                 # Panduan Teknis Android & Riset Akademis
 ```
 
 ---
 
-## 🚦 Panduan Menjalankan Proyek
+## 🚦 Menjalankan Proyek Secara Lokal
 
-### 1. Setup Supabase
-1. Buat proyek baru di [supabase.com](https://supabase.com) (Free Tier).
-2. Buka tab **SQL Editor**, salin dan jalankan seluruh isi file `supabase/schema.sql`.
-3. Buka **Project Settings &rarr; API**, salin `Project URL`, `anon public key`, dan `service_role key`.
-4. Buat file `.env.local` di root proyek:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
-   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
-   ```
+### 1. Prasyarat Lingkungan
+* Node.js 20+
+* Akun Supabase (Free Tier)
 
-### 2. Menjalankan di Komputer Lokal
+### 2. Konfigurasi Kredensial
+Salin `.env.example` menjadi `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://proyek-anda.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOi...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
+
+### 3. Instalasi & Eksekusi
 ```bash
 npm install
 npm run dev
 ```
-Buka `http://localhost:3000` di browser.
+Buka `http://localhost:3000` di peramban.
 
-### 3. Menguji Parser Notifikasi Bank
+### 4. Menjalankan Build Produksi & Typecheck
 ```bash
-node scripts/test-parser.mjs
+npx tsc --noEmit
+npm run build
 ```
 
 ---
 
-## 📱 Panduan Setup MacroDroid (Android)
+## 📱 Membangun Aplikasi Android APK (Capacitor)
 
-1. Unduh aplikasi **MacroDroid** dari Google Play Store (versi gratis sudah mencukupi).
-2. Tambahkan Macro baru:
-   - **Trigger**: `Device Events` &rarr; `Notification` &rarr; `Notification Received` &rarr; Pilih aplikasi: **BCA, GoPay, ShopeePay, BRImo, BNI, atau SeaBank**.
-   - **Action**: `Connectivity` &rarr; `HTTP Request`:
-     - Method: `POST`
-     - URL: `https://[DOMAIN_ANDA]/api/v1/webhook/notify`
-     - Headers:
-       - `Content-Type`: `application/json`
-       - `X-Celengan-Key`: `[KODE_UNDANGAN_SPACE]`
-     - Request Body (JSON):
-       ```json
-       {
-         "app": "{notification_package_name}",
-         "title": "{notification_title}",
-         "text": "{notification_text}"
-       }
-       ```
-3. Begitu Anda melakukan transaksi di HP, notifikasi akan langsung terkirim ke CelenganKita dan muncul di menu **Validasi**!
+Proyek ini telah dikonfigurasi dengan Capacitor Android untuk menghasilkan berkas APK:
+```bash
+npm run build
+npx cap sync android
+```
+Buka folder `android` menggunakan **Android Studio** untuk menghasilkan build Debug atau Release APK (`.apk`).
+Panduan lengkap dapat dibaca di [`docs/ANDROID_APK_GUIDE.md`](docs/ANDROID_APK_GUIDE.md).
 
 ---
 
-## ☁️ Deployment ke Google Cloud Run (Target Rp0)
+## 🔒 Privasi & Keamanan Data Pasangan
 
-1. Build & Push Image Container ke Artifact Registry:
-   ```bash
-   gcloud builds submit --tag gcr.io/[PROJECT_ID]/celengan-kita:latest
-   ```
-2. Deploy ke Cloud Run Region `us-central1` (Eligible Always Free Tier):
-   ```bash
-   gcloud run deploy celengan-kita \
-     --image gcr.io/[PROJECT_ID]/celengan-kita:latest \
-     --region us-central1 \
-     --platform managed \
-     --allow-unauthenticated \
-     --min-instances 0 \
-     --max-instances 1 \
-     --memory 512Mi \
-     --cpu 1 \
-     --set-env-vars NEXT_PUBLIC_SUPABASE_URL="...",NEXT_PUBLIC_SUPABASE_ANON_KEY="...",SUPABASE_SERVICE_ROLE_KEY="..."
-   ```
-3. Hubungkan Custom Domain melalui **Cloudflare Free Plan** (DNS Proxy Orange Cloud) untuk proteksi latensi dan caching gratis aset statis.
+* **Isolasi Penuh**: Menggunakan arsitektur multi-tenant berbasis `space_id` dengan Row-Level Security (RLS) PostgreSQL. Pengguna tidak dapat melihat data pasangan lain.
+* **Human-in-the-Loop**: Notifikasi transaksi dari ponsel tidak langsung mengubah saldo sebelum disetujui bersama di menu *Tinjau*.
+* **Zero Secret Leakage**: Kredensial service-role hanya berjalan di sisi server Next.js.

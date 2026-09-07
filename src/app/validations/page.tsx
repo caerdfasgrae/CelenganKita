@@ -56,16 +56,6 @@ export default async function ValidationsPage() {
         title="Tinjau Belanja"
         subtitle="Notifikasi HP & Dompet Digital"
         backHref="/dashboard"
-        rightAction={
-          <Link
-            href="/space/settings#webhook"
-            aria-label="Atur sambungan notifikasi HP"
-            className="text-xs font-bold px-3 py-2 min-h-[44px] rounded-xl bg-white border border-warm-border text-stone-700 flex items-center gap-1.5 hover:border-warm-apricot hover:text-stone-900 transition-transform duration-75 active:scale-95 shadow-2xs"
-          >
-            <Smartphone className="w-4 h-4 text-orange-600" />
-            <span>Sambungan HP</span>
-          </Link>
-        }
       />
 
       <div className="px-4 py-3 space-y-4 flex-1 pb-28">

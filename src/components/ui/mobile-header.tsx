@@ -40,18 +40,18 @@ export function MobileHeader({
             <Link
               href={backHref}
               aria-label="Kembali ke halaman sebelumnya"
-              className="min-w-[44px] min-h-[44px] rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-700 hover:text-stone-900 hover:border-warm-apricot transition-transform duration-75 active:scale-95 shadow-2xs shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot"
+              className="w-11 h-11 -ml-1 rounded-full flex items-center justify-center text-stone-700 hover:text-stone-950 active:bg-stone-200/50 transition-colors active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot"
             >
-              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              <ChevronLeft className="w-6 h-6 stroke-[2.3]" aria-hidden="true" />
             </Link>
           ) : onBack ? (
             <button
               type="button"
               onClick={onBack}
               aria-label="Kembali ke halaman sebelumnya"
-              className="min-w-[44px] min-h-[44px] rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-700 hover:text-stone-900 hover:border-warm-apricot transition-transform duration-75 active:scale-95 shadow-2xs shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot"
+              className="w-11 h-11 -ml-1 rounded-full flex items-center justify-center text-stone-700 hover:text-stone-950 active:bg-stone-200/50 transition-colors active:scale-90 shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot"
             >
-              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              <ChevronLeft className="w-6 h-6 stroke-[2.3]" aria-hidden="true" />
             </button>
           ) : null}
 

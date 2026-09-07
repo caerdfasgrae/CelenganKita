@@ -53,7 +53,7 @@ export default async function SpaceSettingsPage() {
       {/* Mobile Ergonomic App Bar */}
       <MobileHeader
         title="Pengaturan"
-        subtitle="Kelola Pasangan, Kategori & Sambungan HP"
+        subtitle="Kelola Pasangan & Kategori Belanja"
         backHref="/dashboard"
       />
 
