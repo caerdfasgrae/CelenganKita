@@ -9,6 +9,8 @@ jobs:
   build-apk:
     name: Build Debug APK
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Code
@@ -32,7 +34,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'platforms;android-35 build-tools;35.0.0'
+          packages: 'platforms;android-35 platforms;android-36 build-tools;35.0.0'
 
       - name: Accept Android Licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
@@ -52,6 +54,14 @@ jobs:
             exit 1
           }
 
+      - name: Upload Build Log Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-build-log
+          path: gradle.log
+          retention-days: 7
+
       - name: Upload APK Artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -59,3 +69,21 @@ jobs:
           name: CelenganKita-app-debug
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+      - name: Publish APK to GitHub Release
+        if: success()
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0-apk-debug
+          name: CelenganKita Android App (Debug)
+          body: |
+            ### 📱 CelenganKita Android Companion App (Debug Build)
+            - **URL Webview**: https://celengan-kita-two.vercel.app
+            - **Fitur Khusus**: Bank & E-Wallet Notification Listener (Human-in-the-Loop)
+            - **Download Link Langsung**: Klik file APK di bawah pada smartphone Android Anda untuk langsung download dan instal.
+          files: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
