@@ -8,6 +8,11 @@ const config: CapacitorConfig = {
     // Dual Platform: APK terhubung langsung ke URL produksi Vercel
     // Setiap pembaruan kode di Vercel langsung dinikmati pengguna APK tanpa perlu compile ulang
     url: "https://celengan-kita-two.vercel.app",
+    allowNavigation: [
+      "celengan-kita-two.vercel.app",
+      "*.vercel.app",
+      "*.supabase.co"
+    ],
     cleartext: false,
   },
   android: {

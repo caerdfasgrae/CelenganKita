@@ -1,0 +1,19 @@
+{
+	"appId": "com.celengankita.app",
+	"appName": "CelenganKita",
+	"webDir": "public",
+	"server": {
+		"url": "https://celengan-kita-two.vercel.app",
+		"allowNavigation": [
+			"celengan-kita-two.vercel.app",
+			"*.vercel.app",
+			"*.supabase.co"
+		],
+		"cleartext": false
+	},
+	"android": {
+		"backgroundColor": "#FFFDF8",
+		"allowMixedContent": false,
+		"captureInput": true
+	}
+}

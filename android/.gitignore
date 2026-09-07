@@ -92,10 +92,8 @@ lint/tmp/
 # Cordova plugins for Capacitor (committed for headless CI reproducibility)
 # capacitor-cordova-android-plugins
 
-# Copied web assets
-app/src/main/assets/public
-
-# Generated Config files
-app/src/main/assets/capacitor.config.json
-app/src/main/assets/capacitor.plugins.json
-app/src/main/res/xml/config.xml
+# Copied web assets & configs (committed for headless CI reproducibility)
+# app/src/main/assets/public
+# app/src/main/assets/capacitor.config.json
+# app/src/main/assets/capacitor.plugins.json
+# app/src/main/res/xml/config.xml
