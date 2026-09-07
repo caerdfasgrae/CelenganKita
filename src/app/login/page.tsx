@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { PiggyBank, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
 import { login } from "@/app/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +31,16 @@ export default function LoginPage() {
       <div className="flex items-center gap-2 pt-4">
         <Link
           href="/"
-          className="w-9 h-9 rounded-xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 shadow-2xs"
+          className="flex items-center gap-2 group"
           aria-label="Kembali ke Beranda"
         >
-          <PiggyBank className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 shadow-2xs group-hover:border-amber-300 transition">
+            <PenguinMascot variant="pair" size="xs" />
+          </div>
+          <span className="font-extrabold text-warm-espresso text-base tracking-tight">
+            CelenganKita
+          </span>
         </Link>
-        <span className="font-extrabold text-warm-espresso text-base tracking-tight">
-          CelenganKita
-        </span>
       </div>
 
       {/* Main Form */}

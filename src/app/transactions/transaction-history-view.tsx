@@ -11,7 +11,7 @@ import { formatRupiah, formatTanggal } from "@/lib/utils";
 import { Category, Transaction } from "@/types/database";
 import { deleteTransaction } from "@/app/transactions/actions";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 interface TransactionHistoryViewProps {
   transactions: Transaction[];
@@ -181,7 +181,7 @@ export default function TransactionHistoryView({
       ) : (
         <div className="py-12 px-4 text-center border border-dashed border-warm-border rounded-3xl bg-white space-y-2.5 shadow-2xs">
           <div className="flex justify-center">
-            <PiggyMascot expression="sleeping" size="md" />
+            <PenguinMascot variant="pair" expression="sleeping" size="md" />
           </div>
           <p className="text-xs font-bold text-warm-espresso">
             Belum ada catatan belanja di sini

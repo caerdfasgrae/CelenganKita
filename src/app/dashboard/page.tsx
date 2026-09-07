@@ -15,7 +15,7 @@ import {
   Users,
   ChevronRight,
 } from "lucide-react";
-import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -301,14 +301,14 @@ export default async function DashboardPage() {
           ) : (
             <div className="p-8 rounded-3xl bg-white border border-dashed border-warm-border text-center space-y-3 shadow-2xs">
               <div className="flex justify-center">
-                <PiggyMascot expression="sleeping" size="md" />
+                <PenguinMascot variant="pair" expression="sleeping" size="md" />
               </div>
               <div>
                 <p className="text-xs font-extrabold text-warm-espresso">
                   Dompet berdua masih tenang nih
                 </p>
                 <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-1 leading-relaxed">
-                  Habis makan bareng atau jajan kopi berdua? Yuk catat pengeluaran pertama kalian! ☕🍰
+                  Pingu & Penga lagi santai istirahat. Habis makan bareng atau jajan kopi berdua? Yuk catat pengeluaran pertama kalian! ☕🍰
                 </p>
               </div>
               <Link

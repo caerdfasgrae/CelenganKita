@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { BellRing, Camera, Heart, CheckCircle2, Sparkles, Smartphone, Receipt } from "lucide-react";
-import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 export function InteractiveFlowPreview() {
   const [activeTab, setActiveTab] = useState<"notification" | "receipt" | "couple">("notification");
@@ -82,7 +82,7 @@ export function InteractiveFlowPreview() {
             {/* Converted into CelenganKita Card */}
             <div className="p-3 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-left flex items-center justify-between shadow-xs">
               <div className="flex items-center gap-2.5">
-                <PiggyMascot expression="eating" size="sm" />
+                <PenguinMascot variant="pingu" expression="happy" size="sm" />
                 <div>
                   <p className="text-xs font-bold text-warm-espresso">
                     Kopi Kenangan
@@ -135,36 +135,41 @@ export function InteractiveFlowPreview() {
         )}
 
         {activeTab === "couple" && (
-          <div className="space-y-3 text-left">
-            <div className="flex items-center justify-center gap-4 py-1">
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-200 flex items-center justify-center text-orange-700 font-extrabold text-sm mx-auto shadow-2xs">
-                  A
+          <div className="space-y-3 text-center">
+            {/* Mascot Duo Visual */}
+            <div className="flex justify-center pt-1">
+              <PenguinMascot variant="pair" expression="happy" size="lg" />
+            </div>
+
+            {/* Couple Roles Description */}
+            <div className="grid grid-cols-2 gap-2 text-left">
+              <div className="p-2.5 rounded-2xl bg-rose-50/70 border border-rose-100 space-y-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-rose-400" />
+                  <p className="text-[11px] font-bold text-warm-coral">Pingu</p>
                 </div>
-                <span className="text-[11px] font-bold text-stone-700 mt-1 block">Ayah</span>
-                <span className="text-[9px] text-stone-400 font-medium">Owner</span>
+                <p className="text-[10px] text-stone-600 leading-snug">
+                  Yang teliti mencatat dan memastikan setiap nota tersimpan rapi.
+                </p>
               </div>
 
-              <div className="text-center px-1">
-                <Heart className="w-5 h-5 text-warm-coral fill-warm-coral" />
-                <span className="text-[9px] font-bold text-orange-600 uppercase block mt-1">Berdua</span>
-              </div>
-
-              <div className="text-center">
-                <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-700 font-extrabold text-sm mx-auto shadow-2xs">
-                  B
+              <div className="p-2.5 rounded-2xl bg-blue-50/70 border border-blue-100 space-y-0.5">
+                <div className="flex items-center gap-1">
+                  <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  <p className="text-[11px] font-bold text-blue-700">Penga</p>
                 </div>
-                <span className="text-[11px] font-bold text-stone-700 mt-1 block">Bunda</span>
-                <span className="text-[9px] text-stone-400 font-medium">Partner</span>
+                <p className="text-[10px] text-stone-600 leading-snug">
+                  Yang tenang melindungi dan menjaga stabilitas celengan bersama.
+                </p>
               </div>
             </div>
 
-            <div className="p-3 rounded-2xl bg-white border border-warm-border text-center space-y-1 shadow-2xs">
+            <div className="p-2.5 rounded-2xl bg-[#FFFDF8] border border-warm-border text-center space-y-0.5 shadow-2xs">
               <p className="text-xs font-bold text-warm-espresso">
-                Saling Percaya, Selalu Terbuka
+                Saling Jaga, Saling Isi
               </p>
-              <p className="text-[11px] text-stone-600 leading-normal">
-                Setiap rupiah yang dicatat langsung bisa dilihat dan ditinjau berdua secara adil.
+              <p className="text-[11px] text-stone-500 leading-normal">
+                Bukan soal siapa bayar lebih banyak, tapi soal keterbukaan dan saling percaya berdua.
               </p>
             </div>
           </div>

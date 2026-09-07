@@ -5,7 +5,7 @@ import BottomNav from "@/components/bottom-nav";
 import ValidationItem from "./validation-item";
 import { BellRing, CheckCircle2, ChevronLeft, Sparkles, Smartphone } from "lucide-react";
 import { Category, PendingValidation } from "@/types/database";
-import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 export default async function ValidationsPage() {
   const supabase = await createClient();
@@ -102,14 +102,14 @@ export default async function ValidationsPage() {
         ) : (
           <div className="py-16 text-center space-y-3 bg-white rounded-3xl border border-warm-border p-6 shadow-2xs">
             <div className="flex justify-center">
-              <PiggyMascot expression="celebrate" size="md" />
+              <PenguinMascot variant="pair" expression="celebrate" size="md" />
             </div>
             <div>
               <h3 className="text-sm font-extrabold text-warm-espresso">
                 Semua Belanjaan Sudah Ditinjau Berdua 💕
               </h3>
               <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-1 leading-relaxed">
-                Hore, semua catatan belanja sudah rapi! Belum ada notifikasi transaksi baru yang tertunda.
+                Hore, Pingu & Penga senang semua catatan belanja sudah rapi! Belum ada notifikasi baru yang tertunda.
               </p>
             </div>
           </div>

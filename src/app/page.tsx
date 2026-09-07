@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 import { InteractiveFlowPreview } from "@/components/landing/interactive-flow-preview";
 
 export default async function HomePage() {
@@ -16,16 +16,16 @@ export default async function HomePage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between p-5 space-y-6">
-      {/* Header / Brand with Si Moko */}
+      {/* Header / Brand with Pingu & Penga */}
       <header className="flex items-center justify-between pt-1">
         <div className="flex items-center gap-2.5">
-          <PiggyMascot expression="happy" size="sm" />
+          <PenguinMascot variant="pair" expression="happy" size="sm" />
           <div>
             <span className="font-black text-lg tracking-tight text-warm-espresso block leading-tight">
               CelenganKita
             </span>
             <span className="text-[11px] text-stone-500 font-medium">
-              Kas & Belanja Berdua
+              Saling Jaga, Saling Isi
             </span>
           </div>
         </div>

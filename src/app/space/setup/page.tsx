@@ -6,6 +6,7 @@ import { PlusCircle, UserPlus, Users, AlertCircle, Sparkles } from "lucide-react
 import { createNewSpace, joinExistingSpace } from "@/app/space/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PenguinMascot } from "@/components/ui/penguin-mascot";
 
 function SpaceSetupForm() {
   const searchParams = useSearchParams();
@@ -47,10 +48,10 @@ function SpaceSetupForm() {
 
   return (
     <div className="flex-1 flex flex-col justify-between p-6">
-      {/* Header */}
-      <div className="text-center pt-6 space-y-2">
-        <div className="w-12 h-12 rounded-2xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 mx-auto shadow-xs">
-          <Users className="w-6 h-6" aria-hidden="true" />
+      {/* Header with Pingu & Penga */}
+      <div className="text-center pt-4 space-y-2">
+        <div className="flex justify-center">
+          <PenguinMascot variant="pair" expression="happy" size="md" />
         </div>
         <h1 className="text-2xl font-black text-warm-espresso tracking-tight">
           Mulai Celengan Bersama
