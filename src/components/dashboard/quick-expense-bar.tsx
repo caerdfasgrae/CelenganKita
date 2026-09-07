@@ -6,6 +6,7 @@ import { Category } from "@/types/database";
 import { parseQuickInput, ParsedQuickExpense } from "@/lib/quick-parser";
 import { createManualTransaction } from "@/app/transactions/actions";
 import { formatRupiah, getWIBDateTimeLocal } from "@/lib/utils";
+import Link from "next/link";
 import {
   Send,
   Sparkles,
@@ -15,6 +16,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CheckCircle2,
+  Camera,
 } from "lucide-react";
 
 interface QuickExpenseBarProps {
@@ -145,10 +147,10 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
             className="text-xs font-black text-warm-espresso flex items-center gap-1.5"
           >
             <span className="w-2 h-2 rounded-full bg-warm-apricot inline-block" />
-            Catat Cepat Satu Baris
+            Catat Cepat
           </label>
           <span className="text-[10px] text-stone-500 font-medium">
-            Tanpa buka form panjang
+            Ketik instan atau foto nota
           </span>
         </div>
 
@@ -174,6 +176,15 @@ export function QuickExpenseBar({ spaceId, categories }: QuickExpenseBarProps) {
               </button>
             )}
           </div>
+
+          <Link
+            href="/transactions/new?mode=ocr"
+            aria-label="Foto struk nota kasir"
+            title="Foto struk nota kasir"
+            className="min-w-[46px] min-h-[46px] rounded-xl flex items-center justify-center bg-stone-50 hover:bg-amber-50 hover:text-orange-600 text-stone-600 border border-warm-border transition-all duration-75 active:scale-95 shadow-2xs shrink-0"
+          >
+            <Camera className="w-4 h-4" aria-hidden="true" />
+          </Link>
 
           <button
             type="submit"

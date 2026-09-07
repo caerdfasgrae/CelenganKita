@@ -5,12 +5,9 @@ import { formatRupiah, formatTanggal } from "@/lib/utils";
 import BottomNav from "@/components/bottom-nav";
 import {
   PiggyBank,
-  TrendingUp,
-  TrendingDown,
   BellRing,
   ArrowUpRight,
   ArrowDownLeft,
-  ScanLine,
   PlusCircle,
   Users,
   ChevronRight,
@@ -117,17 +114,25 @@ export default async function DashboardPage() {
           <Link
             href="/space/settings"
             aria-label="Pengaturan celengan dan pasangan"
-            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl bg-white border border-warm-border text-xs font-bold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition-transform duration-75 active:scale-95 shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full bg-white border border-warm-border text-xs font-bold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition-transform duration-75 active:scale-95 shadow-2xs shrink-0"
           >
-            <Users className="w-4 h-4 text-orange-600" aria-hidden="true" />
-            <span>
-              {members && members.length >= 2 ? "Berdua 💕" : "Undang Pasangan +"}
-            </span>
+            {members && members.length >= 2 ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" aria-hidden="true" />
+                <span className="text-xs font-bold">Berdua</span>
+                <span className="text-[11px]">💕</span>
+              </>
+            ) : (
+              <>
+                <Users className="w-3.5 h-3.5 text-orange-600" aria-hidden="true" />
+                <span className="text-xs font-bold text-orange-700">+ Pasangan</span>
+              </>
+            )}
           </Link>
         }
       />
 
-      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
+      <div className="px-4 py-3 space-y-5 flex-1 pb-28">
 
         {/* Banner Antrean Validasi Notifikasi */}
         {(pendingCount ?? 0) > 0 && (
@@ -174,8 +179,8 @@ export default async function DashboardPage() {
 
           {/* Income & Expense Breakdown */}
           <div className="grid grid-cols-2 gap-2.5 pt-2 border-t border-amber-200/60">
-            <div className="flex items-center gap-2.5 bg-white/80 border border-amber-100 rounded-2xl p-2.5 shadow-2xs">
-              <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/80 flex items-center justify-center text-emerald-700 shrink-0">
+            <div className="flex items-center gap-2.5 bg-white/75 rounded-2xl p-2.5 shadow-2xs">
+              <div className="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200/60 flex items-center justify-center text-emerald-700 shrink-0">
                 <ArrowDownLeft className="w-4 h-4" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -188,8 +193,8 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5 bg-white/80 border border-amber-100 rounded-2xl p-2.5 shadow-2xs">
-              <div className="w-7 h-7 rounded-xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-warm-coral shrink-0">
+            <div className="flex items-center gap-2.5 bg-white/75 rounded-2xl p-2.5 shadow-2xs">
+              <div className="w-7 h-7 rounded-xl bg-rose-50 border border-rose-200/60 flex items-center justify-center text-warm-coral shrink-0">
                 <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
               </div>
               <div className="min-w-0">
@@ -204,48 +209,11 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Quick-Input Satu Baris (Natural Language Parser ala Rekafin) */}
+        {/* Quick-Input Satu Baris (Natural Language Parser + Shortcut Kamera Struk) */}
         <QuickExpenseBar
           spaceId={space.id}
           categories={(categories || []) as Category[]}
         />
-
-        {/* Quick Action Buttons */}
-        <div className="grid grid-cols-2 gap-3">
-          <Link
-            href="/transactions/new"
-            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-warm-border flex items-center gap-3 hover:border-warm-apricot hover:bg-[#FFFDF9] transition group shadow-2xs"
-          >
-            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 group-hover:scale-105 transition shrink-0">
-              <PlusCircle className="w-4 h-4" aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-warm-espresso truncate">
-                Catat Belanja
-              </p>
-              <p className="text-[11px] text-stone-500 truncate">
-                Form Lengkap
-              </p>
-            </div>
-          </Link>
-
-          <Link
-            href="/transactions/new?mode=ocr"
-            className="min-h-[52px] p-3.5 rounded-2xl bg-white border border-warm-border flex items-center gap-3 hover:border-warm-apricot hover:bg-[#FFFDF9] transition group shadow-2xs"
-          >
-            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 group-hover:scale-105 transition shrink-0">
-              <ScanLine className="w-4 h-4" aria-hidden="true" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-bold text-warm-espresso truncate">
-                Foto Struk
-              </p>
-              <p className="text-[11px] text-stone-500 truncate">
-                Pindai Nota Belanja
-              </p>
-            </div>
-          </Link>
-        </div>
 
         {/* Visualisasi Pembagian Pengeluaran per Kategori */}
         <SpendingCategoryBreakdown
@@ -268,13 +236,13 @@ export default async function DashboardPage() {
           </div>
 
           {transactions && transactions.length > 0 ? (
-            <div className="space-y-2">
+            <div className="rounded-3xl bg-white border border-warm-border divide-y divide-stone-100 shadow-2xs overflow-hidden">
               {transactions.map((tx: any) => {
                 const isExpense = tx.type === "expense";
                 return (
                   <div
                     key={tx.id}
-                    className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-center justify-between transition hover:border-amber-200 shadow-2xs"
+                    className="p-3.5 flex items-center justify-between transition hover:bg-[#FFFDF9]"
                   >
                     <div className="flex items-center gap-3 min-w-0 flex-1 mr-2">
                       <div

@@ -29,11 +29,11 @@ export function MobileHeader({
 }: MobileHeaderProps) {
   return (
     <header
-      className={`w-full pt-safe px-4 pb-3 bg-[#FFFDF8]/95 backdrop-blur-md border-b border-warm-border/80 z-30 select-none ${
+      className={`w-full pt-safe px-4 pb-3 bg-warm-canvas/95 backdrop-blur-md border-b border-warm-border/50 z-30 select-none ${
         sticky ? "sticky top-0 left-0 right-0" : "relative"
       } ${className}`}
     >
-      <div className="flex items-center justify-between min-h-[44px] gap-3">
+      <div className="flex items-center justify-between min-h-[48px] gap-3">
         {/* Left Side: Back Button or Logo / Mascot */}
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           {backHref ? (

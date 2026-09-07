@@ -140,45 +140,25 @@ export function SpendingCategoryBreakdown({
       </div>
 
       {/* Category Breakdown List */}
-      <div className="space-y-2.5 pt-1">
+      <div className="space-y-2 pt-1">
         {categoryStats.map((cat) => (
-          <div key={cat.id} className="space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2 min-w-0">
-                <span
-                  className="w-2.5 h-2.5 rounded-full shrink-0"
-                  style={{ backgroundColor: cat.color }}
-                  aria-hidden="true"
-                />
-                <span className="font-bold text-warm-espresso truncate">
-                  {cat.name}
-                </span>
-                <span className="text-[10px] font-extrabold text-stone-500 bg-stone-100 px-1.5 py-0.2 rounded-md">
-                  {cat.percentage}%
-                </span>
-              </div>
-              <span className="font-extrabold text-warm-espresso tabular-nums shrink-0">
-                {formatRupiah(cat.amount)}
+          <div key={cat.id} className="flex items-center justify-between text-xs py-0.5">
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: cat.color }}
+                aria-hidden="true"
+              />
+              <span className="font-bold text-warm-espresso truncate">
+                {cat.name}
+              </span>
+              <span className="text-[10px] font-semibold text-stone-500 bg-stone-100 px-1.5 py-0.5 rounded-md">
+                {cat.percentage}%
               </span>
             </div>
-
-            {/* Individual Category Soft Progress Track */}
-            <div
-              className="w-full h-1.5 rounded-full bg-stone-100 overflow-hidden"
-              role="progressbar"
-              aria-valuenow={cat.percentage}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label={`Persentase ${cat.name}`}
-            >
-              <div
-                className="h-full rounded-full transition-all duration-300"
-                style={{
-                  width: `${cat.percentage}%`,
-                  backgroundColor: cat.color,
-                }}
-              />
-            </div>
+            <span className="font-extrabold text-warm-espresso tabular-nums shrink-0">
+              {formatRupiah(cat.amount)}
+            </span>
           </div>
         ))}
       </div>
