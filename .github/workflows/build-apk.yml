@@ -39,9 +39,6 @@ jobs:
       - name: Accept Android Licenses
         run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Make Gradle Wrapper Executable
         run: chmod +x android/gradlew
 
@@ -49,20 +46,17 @@ jobs:
         run: |
           cd android
           set -o pipefail
-          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee ../gradle.log || {
-            echo "## ❌ Gradle Build Error Log" >> $GITHUB_STEP_SUMMARY
-            echo '```text' >> $GITHUB_STEP_SUMMARY
-            tail -n 120 ../gradle.log >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            python3 -c "
-with open('../gradle.log') as f:
-    lines = f.readlines()
-errors = [l.strip() for l in lines if any(k in l.lower() for k in ['error:', 'failure', 'exception', 'cause:'])][:15]
-for e in errors:
-    print(f'::error title=Gradle::{e[:250]}')
-" || true
-            exit 1
-          }
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee ../gradle.log
+
+      - name: Report Failure to Commit Comment
+        if: failure()
+        run: |
+          LOG_CONTENT=$(tail -n 45 gradle.log | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+          curl -s -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/${{ github.repository }}/commits/${{ github.sha }}/comments \
+            -d "{\"body\":\"### ❌ Android Build Error Log\n\`\`\`text\n${LOG_CONTENT}\n\`\`\`\"}" || true
 
       - name: Upload Build Log Artifact
         if: always()
