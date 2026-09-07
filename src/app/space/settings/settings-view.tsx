@@ -179,12 +179,13 @@ export default function SettingsView({
   const [showIntegration, setShowIntegration] = useState(false);
 
   function shareInviteCode() {
-    const shareText = `Halo sayang! Yuk gabung ke Celengan Bersama kita di CelenganKita 💕 Buka ${siteUrl} lalu masukkan Kode Celengan kita: ${space.invite_code}`;
+    const inviteUrl = `${siteUrl}/space/setup?code=${space.invite_code}`;
+    const shareText = `Halo sayang! Yuk gabung ke Celengan Bersama kita di CelenganKita 💕\nBuka tautan ini untuk langsung tersambung:\n👉 ${inviteUrl}\n\nAtau masukkan Kode Celengan kita: ${space.invite_code}`;
     if (navigator.share) {
       navigator.share({
         title: "Undangan CelenganKita",
         text: shareText,
-        url: siteUrl,
+        url: inviteUrl,
       });
     } else {
       window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, "_blank");
@@ -279,11 +280,12 @@ export default function SettingsView({
                     <button
                       type="button"
                       onClick={() => setMemberToRemove(m)}
-                      className="p-1.5 rounded-lg text-stone-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                      className="min-h-[36px] px-2.5 py-1 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 transition flex items-center gap-1 text-[11px] font-bold"
                       title="Keluarkan Pasangan"
                       aria-label={`Keluarkan ${m.nickname || "pasangan"} dari celengan`}
                     >
                       <UserMinus className="w-3.5 h-3.5" />
+                      <span>Keluarkan</span>
                     </button>
                   )}
                 </div>

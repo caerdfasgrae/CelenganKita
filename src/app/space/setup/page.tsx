@@ -1,15 +1,27 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { PlusCircle, UserPlus, Users, AlertCircle } from "lucide-react";
+import { useState, useTransition, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { PlusCircle, UserPlus, Users, AlertCircle, Sparkles } from "lucide-react";
 import { createNewSpace, joinExistingSpace } from "@/app/space/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-export default function SpaceSetupPage() {
-  const [tab, setTab] = useState<"create" | "join">("create");
+function SpaceSetupForm() {
+  const searchParams = useSearchParams();
+  const codeParam = searchParams?.get("code")?.trim().toUpperCase() || "";
+
+  const [tab, setTab] = useState<"create" | "join">(codeParam ? "join" : "create");
+  const [inviteCode, setInviteCode] = useState(codeParam);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (codeParam) {
+      setTab("join");
+      setInviteCode(codeParam);
+    }
+  }, [codeParam]);
 
   async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -88,6 +100,13 @@ export default function SpaceSetupPage() {
         </button>
       </div>
 
+      {codeParam && tab === "join" && (
+        <div className="p-3 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-orange-900 text-xs flex items-center gap-2 mb-4 font-medium shadow-2xs">
+          <Sparkles className="w-4 h-4 text-orange-600 shrink-0" aria-hidden="true" />
+          <span>Kode sambung dari pasanganmu terpasang otomatis! Masukkan panggilan kesayanganmu lalu klik gabung.</span>
+        </div>
+      )}
+
       {error && (
         <div
           role="alert"
@@ -140,6 +159,8 @@ export default function SpaceSetupPage() {
               type="text"
               maxLength={8}
               required
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
               label="Kode Sambung dari Pasangan"
               placeholder="8 Huruf Kode (contoh: 8K7A2M9X)"
               helperText="Minta pasanganmu membagikan kode sambung dari dasbor mereka."
@@ -175,5 +196,19 @@ export default function SpaceSetupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function SpaceSetupPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex-1 flex items-center justify-center p-6 text-xs text-stone-500 font-medium">
+          Memuat pengaturan celengan...
+        </div>
+      }
+    >
+      <SpaceSetupForm />
+    </Suspense>
   );
 }

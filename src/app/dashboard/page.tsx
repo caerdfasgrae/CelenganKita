@@ -107,7 +107,9 @@ export default async function DashboardPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-warm-border text-xs font-semibold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition shadow-2xs"
           >
             <Users className="w-3.5 h-3.5 text-orange-600" aria-hidden="true" />
-            <span>{members?.length || 1} Pasangan</span>
+            <span>
+              {members && members.length >= 2 ? "Berdua 💕" : "Undang Pasangan +"}
+            </span>
           </Link>
         </header>
 
