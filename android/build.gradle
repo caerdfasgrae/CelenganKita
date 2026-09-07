@@ -23,7 +23,7 @@ allprojects {
         mavenCentral()
     }
     ext {
-        compileSdkVersion = 35
+        compileSdkVersion = 36
         targetSdkVersion = 35
         minSdkVersion = 24
     }
