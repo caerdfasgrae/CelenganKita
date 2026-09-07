@@ -56,9 +56,10 @@ export default function BottomNav({ pendingCount = 0 }: BottomNavProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={true}
                 aria-current={isActive ? "page" : undefined}
                 aria-label="Catat Belanja Baru"
-                className="flex flex-col items-center -mt-4 group min-w-[56px] min-h-[56px] justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot rounded-xl"
+                className="flex flex-col items-center -mt-4 group min-w-[56px] min-h-[56px] justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot rounded-xl active:scale-95 transition-transform duration-75"
               >
                 <div className="w-11 h-11 rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-bold flex items-center justify-center shadow-md shadow-orange-950/10 group-active:scale-95 transition duration-100 border border-orange-300">
                   <Icon className="w-5 h-5" aria-hidden="true" />
@@ -74,13 +75,14 @@ export default function BottomNav({ pendingCount = 0 }: BottomNavProps) {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               aria-current={isActive ? "page" : undefined}
               aria-label={
                 item.badge
                   ? `${item.label}, ${item.badge} catatan menunggu ditinjau`
                   : item.label
               }
-              className={`flex flex-col items-center justify-center min-w-[48px] min-h-[48px] py-1 px-2 rounded-lg transition duration-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot ${
+              className={`flex flex-col items-center justify-center min-w-[48px] min-h-[48px] py-1 px-2 rounded-lg transition-transform duration-75 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-warm-apricot ${
                 isActive
                   ? "text-orange-600 font-bold"
                   : "text-stone-500 hover:text-stone-800"

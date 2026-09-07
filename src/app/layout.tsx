@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import PWARegister from "@/components/pwa-register";
+import { WarmupClient } from "@/components/warmup-client";
 
 export const metadata: Metadata = {
   title: "CelenganKita - Manajemen Anggaran Bersama Pasangan",
@@ -34,6 +35,7 @@ export default function RootLayout({
     <html lang="id">
       <body className="min-h-screen bg-[#F7F4EE] text-warm-espresso antialiased flex flex-col items-center">
         <PWARegister />
+        <WarmupClient />
         {/* Container Mobile PWA: Warm Cozy Couple Atmosphere */}
         <div className="w-full max-w-md min-h-screen bg-warm-canvas text-warm-espresso shadow-xl flex flex-col relative border-x border-warm-border">
           <main role="main" className="flex-1 flex flex-col">
