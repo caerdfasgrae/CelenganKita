@@ -5,6 +5,7 @@ import BottomNav from "@/components/bottom-nav";
 import TransactionForm from "./transaction-form";
 import { ChevronLeft } from "lucide-react";
 import { Category } from "@/types/database";
+import { MobileHeader } from "@/components/ui/mobile-header";
 
 export default async function NewTransactionPage() {
   const supabase = await createClient();
@@ -41,25 +42,14 @@ export default async function NewTransactionPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <div className="p-5 space-y-4 flex-1">
-        {/* Header */}
-        <div className="flex items-center gap-2.5 pt-2">
-          <Link
-            href="/dashboard"
-            className="w-8 h-8 rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-600 hover:text-warm-espresso hover:border-warm-apricot transition shadow-2xs"
-            aria-label="Kembali ke Dasbor"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
-              Catat Belanja Baru
-            </h1>
-            <p className="text-[11px] text-stone-500 font-medium">
-              Ketik Manual atau Pindai Foto Nota
-            </p>
-          </div>
-        </div>
+      {/* Mobile Ergonomic App Bar */}
+      <MobileHeader
+        title="Catat Belanja Baru"
+        subtitle="Ketik Manual atau Pindai Foto Nota"
+        backHref="/dashboard"
+      />
+
+      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
 
         {/* Form Container */}
         <TransactionForm

@@ -5,6 +5,7 @@ import BottomNav from "@/components/bottom-nav";
 import SettingsView from "./settings-view";
 import { ChevronLeft } from "lucide-react";
 import { Space, SpaceMember, Category } from "@/types/database";
+import { MobileHeader } from "@/components/ui/mobile-header";
 
 export default async function SpaceSettingsPage() {
   const supabase = await createClient();
@@ -49,25 +50,14 @@ export default async function SpaceSettingsPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <div className="p-5 space-y-4 flex-1">
-        {/* Header */}
-        <div className="flex items-center gap-2.5 pt-2">
-          <Link
-            href="/dashboard"
-            className="w-8 h-8 rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-600 hover:text-warm-espresso hover:border-warm-apricot transition shadow-2xs"
-            aria-label="Kembali ke Dasbor"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Link>
-          <div>
-            <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
-              Pengaturan Celengan
-            </h1>
-            <p className="text-[11px] text-stone-500 font-medium">
-              Pasangan, Kategori & Sambungan HP
-            </p>
-          </div>
-        </div>
+      {/* Mobile Ergonomic App Bar */}
+      <MobileHeader
+        title="Pengaturan"
+        subtitle="Kelola Pasangan, Kategori & Sambungan HP"
+        backHref="/dashboard"
+      />
+
+      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
 
         <SettingsView
           space={space as Space}

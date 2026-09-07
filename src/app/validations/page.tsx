@@ -6,6 +6,7 @@ import ValidationItem from "./validation-item";
 import { BellRing, CheckCircle2, ChevronLeft, Sparkles, Smartphone } from "lucide-react";
 import { Category, PendingValidation } from "@/types/database";
 import { PenguinMascot } from "@/components/ui/penguin-mascot";
+import { MobileHeader } from "@/components/ui/mobile-header";
 
 export default async function ValidationsPage() {
   const supabase = await createClient();
@@ -50,35 +51,24 @@ export default async function ValidationsPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <div className="p-5 space-y-4 flex-1">
-        {/* Header */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="flex items-center gap-2.5">
-            <Link
-              href="/dashboard"
-              className="w-8 h-8 rounded-xl bg-white border border-warm-border flex items-center justify-center text-stone-600 hover:text-warm-espresso hover:border-warm-apricot transition shadow-2xs"
-              aria-label="Kembali ke Dasbor"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Link>
-            <div>
-              <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
-                Tinjau Belanja Otomatis
-              </h1>
-              <p className="text-[11px] text-stone-500 font-medium">
-                Dari Notifikasi HP & Dompet Digital
-              </p>
-            </div>
-          </div>
-
+      {/* Mobile Ergonomic App Bar */}
+      <MobileHeader
+        title="Tinjau Belanja"
+        subtitle="Notifikasi HP & Dompet Digital"
+        backHref="/dashboard"
+        rightAction={
           <Link
             href="/space/settings#webhook"
-            className="text-xs font-bold px-3 py-1.5 rounded-xl bg-white border border-warm-border text-stone-700 flex items-center gap-1.5 hover:border-warm-apricot hover:text-stone-900 transition shadow-2xs"
+            aria-label="Atur sambungan notifikasi HP"
+            className="text-xs font-bold px-3 py-2 min-h-[44px] rounded-xl bg-white border border-warm-border text-stone-700 flex items-center gap-1.5 hover:border-warm-apricot hover:text-stone-900 transition-transform duration-75 active:scale-95 shadow-2xs"
           >
-            <Smartphone className="w-3.5 h-3.5 text-orange-600" />
-            Sambungan HP
+            <Smartphone className="w-4 h-4 text-orange-600" />
+            <span>Sambungan HP</span>
           </Link>
-        </div>
+        }
+      />
+
+      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
 
         {/* Info Banner */}
         <div className="p-3.5 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-stone-800 text-xs flex items-start gap-2.5 shadow-2xs">

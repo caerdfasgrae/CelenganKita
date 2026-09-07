@@ -16,6 +16,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { PenguinMascot } from "@/components/ui/penguin-mascot";
+import { MobileHeader } from "@/components/ui/mobile-header";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -87,32 +88,32 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex-1 flex flex-col justify-between">
-      <div className="p-4 space-y-4 flex-1">
-        {/* Top Bar Header */}
-        <header className="flex items-center justify-between pt-2">
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-bold tracking-wider text-stone-500 uppercase">
-                Celengan Bersama
-              </span>
-              <span className="w-2 h-2 rounded-full bg-warm-coral" aria-hidden="true"></span>
-            </div>
-            <h1 className="text-xl font-extrabold text-warm-espresso tracking-tight">
+      {/* Mobile Ergonomic App Bar */}
+      <MobileHeader
+        title={
+          <div className="flex items-center gap-1.5">
+            <span className="text-base sm:text-lg font-black tracking-tight text-warm-espresso truncate">
               {space.name}
-            </h1>
+            </span>
+            <span className="w-2 h-2 rounded-full bg-warm-coral shrink-0" aria-hidden="true" />
           </div>
-
+        }
+        subtitle="Saling Jaga, Saling Isi 💕"
+        rightAction={
           <Link
             href="/space/settings"
             aria-label="Pengaturan celengan dan pasangan"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-warm-border text-xs font-semibold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition shadow-2xs"
+            className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl bg-white border border-warm-border text-xs font-bold text-stone-700 hover:border-warm-apricot hover:text-stone-900 transition-transform duration-75 active:scale-95 shadow-2xs"
           >
-            <Users className="w-3.5 h-3.5 text-orange-600" aria-hidden="true" />
+            <Users className="w-4 h-4 text-orange-600" aria-hidden="true" />
             <span>
               {members && members.length >= 2 ? "Berdua 💕" : "Undang Pasangan +"}
             </span>
           </Link>
-        </header>
+        }
+      />
+
+      <div className="px-4 py-3 space-y-4 flex-1 pb-28">
 
         {/* Banner Antrean Validasi Notifikasi */}
         {(pendingCount ?? 0) > 0 && (

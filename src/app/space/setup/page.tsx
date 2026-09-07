@@ -47,9 +47,9 @@ function SpaceSetupForm() {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between p-6">
+    <div className="flex-1 flex flex-col justify-between pt-safe px-5 pb-6 safe-bottom">
       {/* Header with Pingu & Penga */}
-      <div className="text-center pt-4 space-y-2">
+      <div className="text-center pt-2 space-y-2">
         <div className="flex justify-center">
           <PenguinMascot variant="pair" expression="happy" size="md" />
         </div>
@@ -75,7 +75,7 @@ function SpaceSetupForm() {
             setTab("create");
             setError(null);
           }}
-          className={`min-h-[40px] text-xs font-bold rounded-xl transition ${
+          className={`min-h-[44px] text-xs font-bold rounded-xl transition ${
             tab === "create"
               ? "bg-[#FFA259] text-stone-900 shadow-sm"
               : "text-stone-600 hover:text-stone-900"
@@ -91,7 +91,7 @@ function SpaceSetupForm() {
             setTab("join");
             setError(null);
           }}
-          className={`min-h-[40px] text-xs font-bold rounded-xl transition ${
+          className={`min-h-[44px] text-xs font-bold rounded-xl transition ${
             tab === "join"
               ? "bg-[#FFA259] text-stone-900 shadow-sm"
               : "text-stone-600 hover:text-stone-900"

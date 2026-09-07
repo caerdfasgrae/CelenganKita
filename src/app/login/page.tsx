@@ -26,12 +26,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between p-6">
+    <div className="flex-1 flex flex-col justify-between pt-safe px-5 pb-6 safe-bottom">
       {/* Top Bar */}
-      <div className="flex items-center gap-2 pt-4">
+      <div className="flex items-center gap-2 pt-1">
         <Link
           href="/"
-          className="flex items-center gap-2 group"
+          className="flex items-center gap-2 group min-h-[44px]"
           aria-label="Kembali ke Beranda"
         >
           <div className="w-10 h-10 rounded-xl bg-warm-cream border border-amber-200 flex items-center justify-center text-orange-700 shadow-2xs group-hover:border-amber-300 transition">
