@@ -15,6 +15,7 @@ import {
   Users,
   ChevronRight,
 } from "lucide-react";
+import { PiggyMascot } from "@/components/ui/piggy-mascot";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -298,24 +299,24 @@ export default async function DashboardPage() {
               })}
             </div>
           ) : (
-            <div className="p-8 rounded-3xl bg-white border border-dashed border-warm-border text-center space-y-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#FFF9EC] border border-amber-100 text-orange-600 flex items-center justify-center mx-auto">
-                <PiggyBank className="w-5 h-5" aria-hidden="true" />
+            <div className="p-8 rounded-3xl bg-white border border-dashed border-warm-border text-center space-y-3 shadow-2xs">
+              <div className="flex justify-center">
+                <PiggyMascot expression="sleeping" size="md" />
               </div>
               <div>
-                <p className="text-xs font-bold text-warm-espresso">
-                  Belum ada catatan belanja bulan ini
+                <p className="text-xs font-extrabold text-warm-espresso">
+                  Dompet berdua masih tenang nih
                 </p>
-                <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-0.5 leading-relaxed">
-                  Yuk catat pengeluaran pertama berdua, foto nota belanja, atau hubungkan notifikasi HP.
+                <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-1 leading-relaxed">
+                  Habis makan bareng atau jajan kopi berdua? Yuk catat pengeluaran pertama kalian! ☕🍰
                 </p>
               </div>
               <Link
                 href="/transactions/new"
-                className="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-bold text-xs transition shadow-sm"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 min-h-[44px] rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold text-xs transition active:scale-[0.98] shadow-xs"
               >
                 <PlusCircle className="w-4 h-4" />
-                Catat Belanja Pertama
+                Catat Pengeluaran Pertama
               </Link>
             </div>
           )}

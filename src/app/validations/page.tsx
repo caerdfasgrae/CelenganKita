@@ -5,6 +5,7 @@ import BottomNav from "@/components/bottom-nav";
 import ValidationItem from "./validation-item";
 import { BellRing, CheckCircle2, ChevronLeft, Sparkles, Smartphone } from "lucide-react";
 import { Category, PendingValidation } from "@/types/database";
+import { PiggyMascot } from "@/components/ui/piggy-mascot";
 
 export default async function ValidationsPage() {
   const supabase = await createClient();
@@ -99,16 +100,16 @@ export default async function ValidationsPage() {
             ))}
           </div>
         ) : (
-          <div className="py-20 text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#FFF9EC] border border-amber-200 text-orange-600 flex items-center justify-center mx-auto shadow-2xs">
-              <CheckCircle2 className="w-6 h-6" />
+          <div className="py-16 text-center space-y-3 bg-white rounded-3xl border border-warm-border p-6 shadow-2xs">
+            <div className="flex justify-center">
+              <PiggyMascot expression="celebrate" size="md" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-warm-espresso">
-                Semua Belanjaan Sudah Ditinjau
+              <h3 className="text-sm font-extrabold text-warm-espresso">
+                Semua Belanjaan Sudah Ditinjau Berdua 💕
               </h3>
               <p className="text-[11px] text-stone-500 max-w-xs mx-auto mt-1 leading-relaxed">
-                Saat kamu atau pasangan bayar via QRIS atau transfer, notifikasi dari ponsel akan muncul di sini.
+                Hore, semua catatan belanja sudah rapi! Belum ada notifikasi transaksi baru yang tertunda.
               </p>
             </div>
           </div>

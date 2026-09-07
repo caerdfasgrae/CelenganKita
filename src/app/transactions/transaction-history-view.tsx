@@ -11,6 +11,7 @@ import { formatRupiah, formatTanggal } from "@/lib/utils";
 import { Category, Transaction } from "@/types/database";
 import { deleteTransaction } from "@/app/transactions/actions";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { PiggyMascot } from "@/components/ui/piggy-mascot";
 
 interface TransactionHistoryViewProps {
   transactions: Transaction[];
@@ -178,8 +179,16 @@ export default function TransactionHistoryView({
           })}
         </div>
       ) : (
-        <div className="py-16 text-center text-stone-500 text-xs border border-dashed border-warm-border rounded-2xl bg-white">
-          Tidak ada catatan belanja yang sesuai dengan pilihan.
+        <div className="py-12 px-4 text-center border border-dashed border-warm-border rounded-3xl bg-white space-y-2.5 shadow-2xs">
+          <div className="flex justify-center">
+            <PiggyMascot expression="sleeping" size="md" />
+          </div>
+          <p className="text-xs font-bold text-warm-espresso">
+            Belum ada catatan belanja di sini
+          </p>
+          <p className="text-[11px] text-stone-500 max-w-xs mx-auto leading-relaxed">
+            Catatan belanja kalian berdua akan muncul rapi di sini setelah ditambahkan.
+          </p>
         </div>
       )}
 

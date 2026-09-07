@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { PiggyBank, BellRing, ScanLine, ArrowRight, ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { PiggyMascot } from "@/components/ui/piggy-mascot";
+import { InteractiveFlowPreview } from "@/components/landing/interactive-flow-preview";
 
 export default async function HomePage() {
   const supabase = await createClient();
@@ -14,100 +15,62 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col justify-between p-6">
-      {/* Header / Brand */}
-      <div className="flex items-center justify-between pt-2">
+    <div className="flex-1 flex flex-col justify-between p-5 space-y-6">
+      {/* Header / Brand with Si Moko */}
+      <header className="flex items-center justify-between pt-1">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-warm-cream border border-amber-200 flex items-center justify-center text-stone-900 shadow-xs">
-            <PiggyBank className="w-5 h-5 text-orange-700" />
-          </div>
+          <PiggyMascot expression="happy" size="sm" />
           <div>
-            <span className="font-extrabold text-lg tracking-tight text-warm-espresso block leading-tight">
+            <span className="font-black text-lg tracking-tight text-warm-espresso block leading-tight">
               CelenganKita
             </span>
             <span className="text-[11px] text-stone-500 font-medium">
-              Celengan Bersama Pasangan
+              Kas & Belanja Berdua
             </span>
           </div>
         </div>
         <Link
           href="/login"
-          className="text-xs font-bold px-3.5 py-1.5 rounded-xl border border-warm-border bg-white text-stone-800 hover:bg-[#FFFDF8] hover:border-warm-apricot transition shadow-2xs"
+          className="text-xs font-bold px-3.5 py-2 rounded-xl border border-warm-border bg-white text-stone-800 hover:bg-[#FFFDF8] hover:border-warm-apricot transition shadow-2xs"
         >
           Masuk
         </Link>
-      </div>
+      </header>
 
-      {/* Hero Section */}
-      <div className="my-auto py-6 text-center space-y-4">
-        <h1 className="text-3xl font-black text-warm-espresso leading-tight tracking-tight">
-          Catat Belanja Berdua, <br />
-          <span className="text-orange-600">Makin Dekat & Rukun</span>
-        </h1>
+      {/* Hero Section (Human, Real Couple Story) */}
+      <section className="text-center space-y-4 pt-1">
+        <div className="space-y-1.5">
+          <span className="text-xs font-bold tracking-wider text-orange-600 uppercase bg-amber-50 px-3 py-1 rounded-full border border-amber-200 inline-block">
+            Tadi siapa yang bayar makan malam?
+          </span>
+          <h1 className="text-2xl sm:text-3xl font-black text-warm-espresso leading-tight tracking-tight">
+            Uang jajan berdua, <br />
+            <span className="text-orange-600">dicatat bareng tanpa drama</span>
+          </h1>
+        </div>
 
         <p className="text-xs text-stone-600 max-w-xs mx-auto leading-relaxed">
-          Kelola uang bareng pasangan tanpa ribet dan tanpa saling curiga. Pindai foto nota belanja dan sambungkan catatan pengeluaran harian kalian berdua.
+          Nggak perlu lagi saling tagih atau scroll riwayat m-banking. Cukup foto nota kasir atau teruskan pesan, catatan kalian langsung rapi di satu celengan.
         </p>
 
-        {/* Feature Highlights (Warm, inviting, human cards) */}
-        <div className="grid grid-cols-1 gap-2.5 pt-2 text-left">
-          <div className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-start gap-3 shadow-xs">
-            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 shrink-0">
-              <BellRing className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-xs font-bold text-warm-espresso">
-                Tersambung Notifikasi HP
-              </h3>
-              <p className="text-[11px] text-stone-500 leading-normal mt-0.5">
-                Belanjaan dari m-banking atau e-wallet langsung tercatat rapi tanpa harus ketik ulang satu per satu.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-start gap-3 shadow-xs">
-            <div className="p-2 rounded-xl bg-[#FFF9EC] border border-amber-100 text-orange-600 shrink-0">
-              <ScanLine className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-xs font-bold text-warm-espresso">
-                Foto Nota & Struk Belanja
-              </h3>
-              <p className="text-[11px] text-stone-500 leading-normal mt-0.5">
-                Cukup foto struk belanjaan minimarket atau resto, nominal dan tokonya langsung terisi otomatis.
-              </p>
-            </div>
-          </div>
-
-          <div className="p-3.5 rounded-2xl bg-white border border-warm-border flex items-start gap-3 shadow-xs">
-            <div className="p-2 rounded-xl bg-rose-50 border border-rose-100 text-warm-coral shrink-0">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-xs font-bold text-warm-espresso">
-                Aman & Privat Khusus Berdua
-              </h3>
-              <p className="text-[11px] text-stone-500 leading-normal mt-0.5">
-                Data keuangan tersimpan aman. Hanya kamu dan pasanganmu yang punya akses membuka celengan ini.
-              </p>
-            </div>
-          </div>
+        {/* Interactive "Show, Don't Tell" Flow Preview */}
+        <div className="pt-2">
+          <InteractiveFlowPreview />
         </div>
-      </div>
+      </section>
 
       {/* CTA Bottom Buttons */}
-      <div className="space-y-2 safe-bottom">
+      <footer className="space-y-2 safe-bottom pt-2">
         <Link
           href="/register"
-          className="w-full h-12 rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-extrabold text-sm shadow-md shadow-orange-950/10 border border-orange-300 flex items-center justify-center gap-2 transition active:scale-[0.98]"
+          className="w-full min-h-[48px] rounded-xl bg-[#FFA259] hover:bg-[#F97316] text-stone-900 font-black text-sm shadow-md shadow-orange-950/10 border border-orange-300 flex items-center justify-center transition active:scale-[0.98]"
         >
           Mulai Celengan Berdua
-          <ArrowRight className="w-4 h-4" />
         </Link>
         <p className="text-center text-[11px] text-stone-500 font-medium">
-          Bisa dipasang langsung di layar utama HP (PWA) tanpa download dari app store.
+          Tersedia di web browser HP maupun aplikasi Android.
         </p>
-      </div>
+      </footer>
     </div>
   );
 }
