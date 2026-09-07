@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { PenguinMascot } from "@/components/ui/penguin-mascot";
 import { MobileHeader } from "@/components/ui/mobile-header";
+import { QuickExpenseBar } from "@/components/dashboard/quick-expense-bar";
+import { SpendingCategoryBreakdown } from "@/components/dashboard/spending-category-breakdown";
+import { Category } from "@/types/database";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -57,30 +60,41 @@ export default async function DashboardPage() {
     .eq("space_id", space.id)
     .eq("status", "pending");
 
-  // Ambil transaksi bulan ini
+  // Ambil transaksi bulan ini untuk saldo & grafik kategori yang akurat
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
+  const { data: monthTransactions } = await supabase
+    .from("transactions")
+    .select("*, categories(*)")
+    .eq("space_id", space.id)
+    .gte("transaction_date", startOfMonth.toISOString());
+
+  // Ambil transaksi terkini untuk daftar mutasi
   const { data: transactions } = await supabase
     .from("transactions")
     .select("*, categories(*), profiles(full_name)")
     .eq("space_id", space.id)
     .order("transaction_date", { ascending: false })
-    .limit(20);
+    .limit(10);
+
+  // Ambil daftar kategori di space ini
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("*")
+    .or(`is_system.eq.true,space_id.eq.${space.id}`)
+    .order("name");
 
   // Hitung total pemasukan & pengeluaran bulan ini
   let totalIncome = 0;
   let totalExpense = 0;
 
-  transactions?.forEach((tx) => {
-    const txDate = new Date(tx.transaction_date);
-    if (txDate >= startOfMonth) {
-      if (tx.type === "income") {
-        totalIncome += Number(tx.amount);
-      } else {
-        totalExpense += Number(tx.amount);
-      }
+  monthTransactions?.forEach((tx) => {
+    if (tx.type === "income") {
+      totalIncome += Number(tx.amount);
+    } else {
+      totalExpense += Number(tx.amount);
     }
   });
 
@@ -190,6 +204,12 @@ export default async function DashboardPage() {
           </div>
         </section>
 
+        {/* Quick-Input Satu Baris (Natural Language Parser ala Rekafin) */}
+        <QuickExpenseBar
+          spaceId={space.id}
+          categories={(categories || []) as Category[]}
+        />
+
         {/* Quick Action Buttons */}
         <div className="grid grid-cols-2 gap-3">
           <Link
@@ -204,7 +224,7 @@ export default async function DashboardPage() {
                 Catat Belanja
               </p>
               <p className="text-[11px] text-stone-500 truncate">
-                Ketik Sendiri
+                Form Lengkap
               </p>
             </div>
           </Link>
@@ -226,6 +246,12 @@ export default async function DashboardPage() {
             </div>
           </Link>
         </div>
+
+        {/* Visualisasi Pembagian Pengeluaran per Kategori */}
+        <SpendingCategoryBreakdown
+          transactions={(monthTransactions || []) as any}
+          categories={(categories || []) as Category[]}
+        />
 
         {/* Transaksi Terbaru */}
         <section aria-label="Catatan Belanja Terkini" className="space-y-2.5 pt-1">
